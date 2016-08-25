@@ -75,6 +75,9 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 mProgressBar.setVisibility(View.VISIBLE);
+                mBtnLogin.setClickable(false);
+                mBtnRegister.setClickable(false);
+
 
                 //authenticate user
                 mAuth.signInWithEmailAndPassword(email, password)
@@ -85,6 +88,8 @@ public class LoginActivity extends AppCompatActivity {
                                 // the auth state listener will be notified and logic to handle the
                                 // signed in user can be handled in the listener.
                                 mProgressBar.setVisibility(View.GONE);
+                                mBtnLogin.setClickable(true);
+                                mBtnRegister.setClickable(true);
                                 if (!task.isSuccessful()) {
                                     // there was an error
                                     if (password.length() < RegisterActivity.MIN_PASSWRD_LENGTH) {

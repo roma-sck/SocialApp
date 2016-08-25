@@ -72,6 +72,8 @@ public class RegisterActivity extends AppCompatActivity {
                 }
 
                 mProgressBar.setVisibility(View.VISIBLE);
+                mBtnSignIn.setClickable(false);
+                mBtnRegister.setClickable(false);
                 //create user
                 mAuth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
@@ -83,6 +85,8 @@ public class RegisterActivity extends AppCompatActivity {
                                         Toast.LENGTH_SHORT).show();
 
                                 mProgressBar.setVisibility(View.GONE);
+                                mBtnSignIn.setClickable(true);
+                                mBtnRegister.setClickable(true);
                                 // If sign in fails, display a message to the user. If sign in succeeds
                                 // the auth state listener will be notified and logic to handle the
                                 // signed in user can be handled in the listener.
@@ -114,5 +118,7 @@ public class RegisterActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         mProgressBar.setVisibility(View.GONE);
+        mBtnSignIn.setClickable(true);
+        mBtnRegister.setClickable(true);
     }
 }
