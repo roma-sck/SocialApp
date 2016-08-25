@@ -29,4 +29,11 @@
     <string name="btn_sign_out">Sign Out</string>
     <string name="lbl_forgot_password">Forgot password?</string>
     <string name="forgot_password_msg">We just need your registered Email Id to sent you password reset instructions.</string>
+    <string name="user_email_text">"User Email :  "</string>
+    <string name="user_id_text">"User Id :  "</string>
+    <string name="error_toast_enter_email">"Enter email address!</string>
+    <string name="error_toast_enter_password">Enter password!</string>
+    <string name="error_toast_short_password">Password too short, enter minimum 6 characters!</string>
+    <string name="error_toast_auth_failed">Authentication failed.</string>
+    <string name="toast_auth_completed">createUserWithEmail:onComplete:</string>
 </resources>

@@ -18,15 +18,13 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
-/**
- * A login screen that offers login via email/password.
- */
 public class RegisterActivity extends AppCompatActivity {
 
-    private EditText inputEmail, inputPassword;
-    private Button btnSignIn, btnSignUp, btnResetPassword;
-    private ProgressBar progressBar;
-    private FirebaseAuth auth;
+    private EditText mInputEmail, mInputPassword;
+    private Button mBtnSignIn, mBtnRegister;
+    private ProgressBar mProgressBar;
+    private FirebaseAuth mAuth;
+    public static final int MIN_PASSWRD_LENGTH = 6;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,64 +32,64 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         //Get Firebase auth instance
-        auth = FirebaseAuth.getInstance();
+        mAuth = FirebaseAuth.getInstance();
 
-        btnSignIn = (Button) findViewById(R.id.sign_in_button);
-        btnSignUp = (Button) findViewById(R.id.sign_up_button);
-        inputEmail = (EditText) findViewById(R.id.email);
-        inputPassword = (EditText) findViewById(R.id.password);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        btnResetPassword = (Button) findViewById(R.id.btn_reset_password);
+        findViews();
 
-//        btnResetPassword.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                startActivity(new Intent(RegisterActivity.this, ResetPasswordActivity.class));
-//            }
-//        });
-
-        btnSignIn.setOnClickListener(new View.OnClickListener() {
+        mBtnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
 
-        btnSignUp.setOnClickListener(new View.OnClickListener() {
+        mBtnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                String email = inputEmail.getText().toString().trim();
-                String password = inputPassword.getText().toString().trim();
+                String email = mInputEmail.getText().toString().trim();
+                String password = mInputPassword.getText().toString().trim();
 
                 if (TextUtils.isEmpty(email)) {
-                    Toast.makeText(getApplicationContext(), "Enter email address!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),
+                            getString(R.string.error_toast_enter_email),
+                            Toast.LENGTH_SHORT).show();
                     return;
                 }
 
                 if (TextUtils.isEmpty(password)) {
-                    Toast.makeText(getApplicationContext(), "Enter password!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),
+                            getString(R.string.error_toast_enter_password),
+                            Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                if (password.length() < 6) {
-                    Toast.makeText(getApplicationContext(), "Password too short, enter minimum 6 characters!", Toast.LENGTH_SHORT).show();
+                if (password.length() < MIN_PASSWRD_LENGTH) {
+                    Toast.makeText(getApplicationContext(),
+                            getString(R.string.error_toast_short_password),
+                            Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                progressBar.setVisibility(View.VISIBLE);
+                mProgressBar.setVisibility(View.VISIBLE);
                 //create user
-                auth.createUserWithEmailAndPassword(email, password)
+                mAuth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
-                                Toast.makeText(RegisterActivity.this, "createUserWithEmail:onComplete:" + task.isSuccessful(), Toast.LENGTH_SHORT).show();
-                                progressBar.setVisibility(View.GONE);
+                                String result = getString(R.string.toast_auth_completed) + task.isSuccessful();
+                                Toast.makeText(RegisterActivity.this,
+                                        result,
+                                        Toast.LENGTH_SHORT).show();
+
+                                mProgressBar.setVisibility(View.GONE);
                                 // If sign in fails, display a message to the user. If sign in succeeds
                                 // the auth state listener will be notified and logic to handle the
                                 // signed in user can be handled in the listener.
                                 if (!task.isSuccessful()) {
-                                    Toast.makeText(RegisterActivity.this, "Authentication failed." + task.getException(),
+                                    result = getString(R.string.error_toast_auth_failed) + task.getException();
+                                    Toast.makeText(RegisterActivity.this,
+                                            result,
                                             Toast.LENGTH_SHORT).show();
                                 } else {
                                     startActivity(new Intent(RegisterActivity.this, MainActivity.class));
@@ -104,9 +102,17 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
+    private void findViews() {
+        mBtnSignIn = (Button) findViewById(R.id.sign_in_button);
+        mBtnRegister = (Button) findViewById(R.id.register_button);
+        mInputEmail = (EditText) findViewById(R.id.email);
+        mInputPassword = (EditText) findViewById(R.id.password);
+        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
-        progressBar.setVisibility(View.GONE);
+        mProgressBar.setVisibility(View.GONE);
     }
 }
