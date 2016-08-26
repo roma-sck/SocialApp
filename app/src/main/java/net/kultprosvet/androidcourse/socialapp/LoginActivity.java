@@ -61,9 +61,14 @@ public class LoginActivity extends AppCompatActivity {
                 final String password = mInputPassword.getText().toString();
 
                 if (TextUtils.isEmpty(email)) {
+                    mInputEmail.setError(getString(R.string.error_toast_enter_email));
                     Toast.makeText(getApplicationContext(),
                             getString(R.string.error_toast_enter_email),
                             Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (!android.util.Patterns.EMAIL_ADDRESS.matcher(mInputEmail.getText().toString()).matches()){
+                    mInputEmail.setError(getString(R.string.wrong_email_format));
                     return;
                 }
 
@@ -78,12 +83,13 @@ public class LoginActivity extends AppCompatActivity {
                 mBtnLogin.setClickable(false);
                 mBtnRegister.setClickable(false);
 
-
+                mBtnLogin.setEnabled(false);
                 //authenticate user
                 mAuth.signInWithEmailAndPassword(email, password)
                         .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
+                        //        mBtnLogin.setEnabled(true);
                                 // If sign in fails, display a message to the user. If sign in succeeds
                                 // the auth state listener will be notified and logic to handle the
                                 // signed in user can be handled in the listener.
