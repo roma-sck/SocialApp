@@ -32,6 +32,7 @@
     <string name="user_email_text">"User Email :  "</string>
     <string name="user_id_text">"User Id :  "</string>
     <string name="error_toast_enter_email">"Enter email address!</string>
+    <string name="wrong_email_format">Wrong email format</string>
     <string name="error_toast_enter_password">Enter password!</string>
     <string name="error_toast_short_password">Password too short, enter minimum 6 characters!</string>
     <string name="error_toast_auth_failed">Authentication failed.</string>
