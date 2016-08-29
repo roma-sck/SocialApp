@@ -77,6 +77,7 @@ public class RegisterActivityTest {
         onView(withId(R.id.password)).perform(replaceText("123456"));
         takeScreenshot("field filled");
         onView(withId(R.id.btn_register)).perform(click());
+        onView(withId(R.id.email)).check(matches(hasErrorText(context.getString(R.string.error_toast_auth_failed))));
         takeScreenshot("register");
     }
     @After

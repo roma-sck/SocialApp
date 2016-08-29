@@ -96,6 +96,7 @@ public class RegisterActivity extends AppCompatActivity {
                                 // signed in user can be handled in the listener.
                                 if (!task.isSuccessful()) {
                                     result = getString(R.string.error_toast_auth_failed) + task.getException();
+                                    mInputEmail.setError(getString(R.string.error_toast_auth_failed));
                                     Toast.makeText(RegisterActivity.this,
                                             result,
                                             Toast.LENGTH_SHORT).show();
