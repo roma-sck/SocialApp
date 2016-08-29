@@ -71,13 +71,13 @@ public class RegisterActivityTest {
         onView(withId(R.id.email)).check(matches(hasErrorText(context.getString(R.string.wrong_email_format))));
     }
     @Test
-    public void loginTest(){
+    public void registerTest(){
         takeScreenshot("start");
         onView(withId(R.id.email)).perform(replaceText("roma@ya.ru"));
         onView(withId(R.id.password)).perform(replaceText("123456"));
         takeScreenshot("field filled");
         onView(withId(R.id.btn_register)).perform(click());
-        takeScreenshot("login");
+        takeScreenshot("register");
     }
     @After
     public void tearDown(){
