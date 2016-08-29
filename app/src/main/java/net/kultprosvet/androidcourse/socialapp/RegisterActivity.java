@@ -16,8 +16,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-import static android.Manifest.permission.READ_CONTACTS;
-
 public class RegisterActivity extends AppCompatActivity {
 
     private EditText mInputEmail, mInputPassword;
@@ -51,9 +49,15 @@ public class RegisterActivity extends AppCompatActivity {
                 String password = mInputPassword.getText().toString().trim();
 
                 if (TextUtils.isEmpty(email)) {
+                    mInputEmail.setError(getString(R.string.error_toast_enter_email));
                     Toast.makeText(getApplicationContext(),
                             getString(R.string.error_toast_enter_email),
                             Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (!android.util.Patterns.EMAIL_ADDRESS.matcher(mInputEmail.getText().toString()).matches()){
+                    mInputEmail.setError(getString(R.string.wrong_email_format));
                     return;
                 }
 
@@ -72,8 +76,8 @@ public class RegisterActivity extends AppCompatActivity {
                 }
 
                 mProgressBar.setVisibility(View.VISIBLE);
-                mBtnSignIn.setClickable(false);
-                mBtnRegister.setClickable(false);
+                mBtnSignIn.setEnabled(false);
+                mBtnRegister.setEnabled(false);
                 //create user
                 mAuth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(RegisterActivity.this, new OnCompleteListener<AuthResult>() {
@@ -107,8 +111,8 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void findViews() {
-        mBtnSignIn = (Button) findViewById(R.id.sign_in_button);
-        mBtnRegister = (Button) findViewById(R.id.register_button);
+        mBtnSignIn = (Button) findViewById(R.id.btn_sign_in);
+        mBtnRegister = (Button) findViewById(R.id.btn_register);
         mInputEmail = (EditText) findViewById(R.id.email);
         mInputPassword = (EditText) findViewById(R.id.password);
         mProgressBar = (ProgressBar) findViewById(R.id.progressBar);

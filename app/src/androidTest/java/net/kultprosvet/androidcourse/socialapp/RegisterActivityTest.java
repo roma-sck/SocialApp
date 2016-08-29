@@ -28,14 +28,14 @@ import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.runner.lifecycle.Stage.RESUMED;
 import static org.hamcrest.Matchers.not;
 /**
- * Created by Stanislav Volnjanskij on 25.08.16.
+ * Created by RomanFomenko on 29.08.2016.
  */
 @RunWith(AndroidJUnit4.class)
-public class LoginActivityTest {
+public class RegisterActivityTest {
 
     private static UiDevice uiDevice;
     @Rule
-    public ActivityTestRule<LoginActivity> rule=new ActivityTestRule<LoginActivity>(LoginActivity.class);
+    public ActivityTestRule<RegisterActivity> rule=new ActivityTestRule<>(RegisterActivity.class);
     private static Context context;
     private Object currentActivity;
     private int counter=1;
@@ -53,21 +53,21 @@ public class LoginActivityTest {
 
     @Test
     public void doubleClickTest(){
-        onView(withId(R.id.email)).perform(replaceText("stas@kultprosvet.net"));
+        onView(withId(R.id.email)).perform(replaceText("roma2@ya.ru"));
         onView(withId(R.id.password)).perform(replaceText("123456"));
-        onView(withId(R.id.btn_login)).perform(click());
+        onView(withId(R.id.btn_register)).perform(click());
         //button should be disabled
-        onView(withId(R.id.btn_login)).check(matches(not(ViewMatchers.isEnabled())));
+        onView(withId(R.id.btn_register)).check(matches(not(ViewMatchers.isEnabled())));
     }
     @Test
     public void emailFieldVerifyCheck(){
-        onView(withId(R.id.btn_login)).perform(click());
+        onView(withId(R.id.btn_register)).perform(click());
         onView(withId(R.id.email)).check(matches(hasErrorText(context.getString(R.string.error_toast_enter_email))));
     }
     @Test
     public void emailFormatCheck(){
         onView(withId(R.id.email)).perform(replaceText("xxxx"));
-        onView(withId(R.id.btn_login)).perform(click());
+        onView(withId(R.id.btn_register)).perform(click());
         onView(withId(R.id.email)).check(matches(hasErrorText(context.getString(R.string.wrong_email_format))));
     }
     @Test
@@ -76,7 +76,7 @@ public class LoginActivityTest {
         onView(withId(R.id.email)).perform(replaceText("roma@ya.ru"));
         onView(withId(R.id.password)).perform(replaceText("123456"));
         takeScreenshot("field filled");
-        onView(withId(R.id.btn_login)).perform(click());
+        onView(withId(R.id.btn_register)).perform(click());
         takeScreenshot("login");
     }
     @After
@@ -92,7 +92,7 @@ public class LoginActivityTest {
             public void run() {
                 Collection resumedActivities = ActivityLifecycleMonitorRegistry.getInstance().getActivitiesInStage(RESUMED);
                 if (resumedActivities.iterator().hasNext()){
-                     currentActivity = resumedActivities.iterator().next();
+                    currentActivity = resumedActivities.iterator().next();
                 }
             }
         });

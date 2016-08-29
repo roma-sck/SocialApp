@@ -60,7 +60,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <Button
-                android:id="@+id/register_button"
+                android:id="@+id/btn_register"
                 style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -73,7 +73,7 @@
             <!-- Link to Login Screen -->
 
             <Button
-                android:id="@+id/sign_in_button"
+                android:id="@+id/btn_sign_in"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dip"
