@@ -15,6 +15,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import net.kultprosvet.androidcourse.socialapp.models.User;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -23,6 +28,7 @@ public class RegisterActivity extends AppCompatActivity {
     private ProgressBar mProgressBar;
     private FirebaseAuth mAuth;
     public static final int MIN_PASSWRD_LENGTH = 6;
+    private DatabaseReference mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +37,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         //Get Firebase auth instance
         mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
 
         findViews();
 
@@ -101,14 +108,35 @@ public class RegisterActivity extends AppCompatActivity {
                                             result,
                                             Toast.LENGTH_SHORT).show();
                                 } else {
-                                    startActivity(new Intent(RegisterActivity.this, MainActivity.class));
-                                    finish();
+                                    onAuthSuccess(task.getResult().getUser());
                                 }
                             }
                         });
 
             }
         });
+    }
+
+    private void onAuthSuccess(FirebaseUser user) {
+        String username = usernameFromEmail(user.getEmail());
+        // Write new user
+        writeNewUser(user.getUid(), username, user.getEmail());
+        // Go to MainActivity
+        startActivity(new Intent(RegisterActivity.this, MainActivity.class));
+        finish();
+    }
+
+    private String usernameFromEmail(String email) {
+        if (email.contains("@")) {
+            return email.split("@")[0];
+        } else {
+            return email;
+        }
+    }
+
+    private void writeNewUser(String userId, String name, String email) {
+        User user = new User(name, email);
+        mDatabase.child("users").child(userId).setValue(user);
     }
 
     private void findViews() {

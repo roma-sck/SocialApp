@@ -14,6 +14,7 @@ import com.google.firebase.auth.FirebaseUser;
 public class MainActivity extends BaseActivity {
 
     private TextView mUserEmail, mUserId;
+    private Button mBtnAddPost;
     private Button mBtnSignOut;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseAuth mAuth;
@@ -56,6 +57,14 @@ public class MainActivity extends BaseActivity {
             }
         });
 
+        // Button launches NewPostActivity
+        mBtnAddPost.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, NewPostActivity.class));
+            }
+        });
+
         updateUi(user);
     }
 
@@ -63,6 +72,7 @@ public class MainActivity extends BaseActivity {
         mUserEmail = (TextView) findViewById(R.id.user_email);
         mUserId = (TextView) findViewById(R.id.user_id);
         mBtnSignOut = (Button) findViewById(R.id.sign_out);
+        mBtnAddPost = (Button) findViewById(R.id.btn_new_post);
 
         hideProgressDialog();
     }
