@@ -62,7 +62,7 @@ public class NewPostActivity extends BaseActivity {
         }
 
         // single_value_read]
-        final String userId = getFirebaseAuth().getCurrentUser().getUid();
+        final String userId = getUid();
         mDatabase.child("users").child(userId).addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
