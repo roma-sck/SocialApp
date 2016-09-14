@@ -23,6 +23,7 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
 
 import net.kultprosvet.androidcourse.socialapp.models.Post;
+import net.kultprosvet.androidcourse.socialapp.viewholder.PostViewHolder;
 
 public class MainActivity extends BaseActivity {
 
