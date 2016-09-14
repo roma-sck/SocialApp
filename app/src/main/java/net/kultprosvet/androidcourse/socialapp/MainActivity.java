@@ -31,13 +31,10 @@ public class MainActivity extends BaseActivity {
     private Button mBtnSignOut;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseAuth mAuth;
-//////////////////////////
     private static final String TAG = "MainActivity";
     private DatabaseReference mDatabase;
     private FirebaseRecyclerAdapter<Post, PostViewHolder> mAdapter;
     private RecyclerView mRecycler;
-    private LinearLayoutManager mManager;
-//////////////////////////
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,15 +105,7 @@ public class MainActivity extends BaseActivity {
 
     private void showPosts() {
         mDatabase = FirebaseDatabase.getInstance().getReference();
-
-        mRecycler = (RecyclerView) findViewById(R.id.messages_list);
-        mRecycler.setHasFixedSize(true);
-        // Set up Layout Manager, reverse layout
-        mManager = new LinearLayoutManager(this);
-        mManager.setReverseLayout(true);
-        mManager.setStackFromEnd(true);
-        mRecycler.setLayoutManager(mManager);
-
+        setUpRecyclerView();
         // Set up FirebaseRecyclerAdapter with the Query
         Query postsQuery = getQuery(mDatabase);
         mAdapter = new FirebaseRecyclerAdapter<Post, PostViewHolder>(Post.class, R.layout.item_post,
@@ -160,6 +149,16 @@ public class MainActivity extends BaseActivity {
             }
         };
         mRecycler.setAdapter(mAdapter);
+    }
+
+    private void setUpRecyclerView() {
+        mRecycler = (RecyclerView) findViewById(R.id.messages_list);
+        mRecycler.setHasFixedSize(true);
+        // Set up Layout Manager, reverse layout
+        LinearLayoutManager manager = new LinearLayoutManager(this);
+        manager.setReverseLayout(true);
+        manager.setStackFromEnd(true);
+        mRecycler.setLayoutManager(manager);
     }
 
     private void onStarClicked(DatabaseReference postRef) {
