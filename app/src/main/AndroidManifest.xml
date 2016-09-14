@@ -37,6 +37,22 @@
             android:name=".NewPostActivity"/>
         <activity
             android:name=".PostDetailActivity"/>
+        <service
+            android:name=".MyDownloadService"
+            android:exported="false"/>
+        <!--
+          Android N SDK has new restrictions around sharing file:// URIs
+          https://developer.android.com/reference/android/support/v4/content/FileProvider.html#ProviderDefinition
+        -->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="net.kultprosvet.androidcourse.socialapp.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

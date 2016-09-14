@@ -38,4 +38,11 @@
     <string name="error_toast_auth_failed">Authentication failed.</string>
     <string name="toast_auth_completed">createUserWithEmail:onComplete:</string>
     <string name="btn_new_post_text">Add new post</string>
+
+    <string name="camera_button_text">Upload</string>
+    <string name="take_photo_prompt">Upload a Photo</string>
+    <string name="download">Download</string>
+    <string name="success">Success</string>
+    <string name="log_out">Log out</string>
+
 </resources>
