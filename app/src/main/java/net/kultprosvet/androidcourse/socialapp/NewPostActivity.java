@@ -1,8 +1,6 @@
 package net.kultprosvet.androidcourse.socialapp;
 
-import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -23,7 +21,6 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -41,11 +38,10 @@ import net.kultprosvet.androidcourse.socialapp.models.User;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
-public class NewPostActivity extends BaseActivity implements View.OnClickListener {
+public class NewPostActivity extends BaseActivity {
 
     private static final String TAG = "NewPostActivity";
     private static final String REQUIRED = "Required";
@@ -53,13 +49,11 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
     private EditText mTitleField;
     private EditText mBodyField;
 
-    private static final int RC_TAKE_PICTURE = 101;
-    private static final int RC_STORAGE_PERMS = 102;
+    private static final int RC_TAKE_VIDEO = 101;
+    private static final int RC_CHOOSE_VIDEO = 102;
     private static final String KEY_FILE_URI = "key_file_uri";
     private static final String KEY_DOWNLOAD_URL = "key_download_url";
 
-    private BroadcastReceiver mDownloadReceiver;
-    private ProgressDialog mProgressDialog;
     private FirebaseAuth mAuth;
     private Uri mDownloadUrl = null;
     private Uri mFileUri = null;
@@ -77,8 +71,6 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
 
         mTitleField = (EditText) findViewById(R.id.field_title);
         mBodyField = (EditText) findViewById(R.id.field_body);
-        findViewById(R.id.button_camera).setOnClickListener(this);
-        findViewById(R.id.button_download).setOnClickListener(this);
 
         findViewById(R.id.fab_submit_post).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,76 +85,13 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
             mDownloadUrl = savedInstanceState.getParcelable(KEY_DOWNLOAD_URL);
         }
 
-        // Download receiver
-        mDownloadReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                Log.d(TAG, "downloadReceiver:onReceive:" + intent);
-                hideProgressDialog();
-
-                if (MyDownloadService.ACTION_COMPLETED.equals(intent.getAction())) {
-                    String path = intent.getStringExtra(MyDownloadService.EXTRA_DOWNLOAD_PATH);
-                    long numBytes = intent.getLongExtra(MyDownloadService.EXTRA_BYTES_DOWNLOADED, 0);
-
-                    // Alert success
-                    showMessageDialog(getString(R.string.success), String.format(Locale.getDefault(),
-                            "%d bytes downloaded from %s", numBytes, path));
-                }
-
-                if (MyDownloadService.ACTION_ERROR.equals(intent.getAction())) {
-                    String path = intent.getStringExtra(MyDownloadService.EXTRA_DOWNLOAD_PATH);
-
-                    // Alert failure
-                    showMessageDialog("Error", String.format(Locale.getDefault(),
-                            "Failed to download from %s", path));
-                }
-            }
-        };
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        updateUI(mAuth.getCurrentUser());
-
-        // Register download receiver
-        LocalBroadcastManager.getInstance(this)
-                .registerReceiver(mDownloadReceiver, MyDownloadService.getIntentFilter());
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-
-        // Unregister download receiver
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mDownloadReceiver);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle out) {
-        super.onSaveInstanceState(out);
-        out.putParcelable(KEY_FILE_URI, mFileUri);
-        out.putParcelable(KEY_DOWNLOAD_URL, mDownloadUrl);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "onActivityResult:" + requestCode + ":" + resultCode + ":" + data);
-        if (requestCode == RC_TAKE_PICTURE) {
-            if (resultCode == RESULT_OK) {
-                if (mFileUri != null) {
-                    uploadFromUri(mFileUri);
-                } else {
-                    Log.w(TAG, "File URI is null");
-                }
-            } else {
-                Toast.makeText(this, "Taking picture failed.", Toast.LENGTH_SHORT).show();
-            }
-        }
+        uploadVideo();
     }
 
     private void uploadFromUri(Uri fileUri) {
         Log.d(TAG, "uploadFromUri:src:" + fileUri.toString());
+        grantUriPermission("net.kultprosvet.androidcourse.socialapp", fileUri,
+                Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
         // [START get_child_ref]
         // Get a reference to store file at photos/<FILENAME>.jpg
@@ -179,50 +108,77 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
                 .addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        // Upload succeeded
-                        Log.d(TAG, "uploadFromUri:onSuccess");
-
-                        // Get the public download URL
                         mDownloadUrl = taskSnapshot.getMetadata().getDownloadUrl();
-
-                        // [START_EXCLUDE]
+                        mBodyField.setText(mDownloadUrl.toString());
                         hideProgressDialog();
-                        updateUI(mAuth.getCurrentUser());
-                        // [END_EXCLUDE]
                     }
                 })
                 .addOnFailureListener(this, new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception exception) {
-                        // Upload failed
-                        Log.w(TAG, "uploadFromUri:onFailure", exception);
-
                         mDownloadUrl = null;
-
-                        // [START_EXCLUDE]
                         hideProgressDialog();
                         Toast.makeText(getApplicationContext(), "Error: upload failed",
                                 Toast.LENGTH_SHORT).show();
-                        updateUI(mAuth.getCurrentUser());
-                        // [END_EXCLUDE]
                     }
                 });
     }
 
-    private void launchCamera() {
-        Log.d(TAG, "launchCamera");
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateUI(mAuth.getCurrentUser());
+    }
 
-//        // Check that we have permission to read images from external storage.
-//        String perm = Manifest.permission.WRITE_EXTERNAL_STORAGE;
-//        if (!EasyPermissions.hasPermissions(this, perm)) {
-//            EasyPermissions.requestPermissions(this, getString(R.string.rationale_storage),
-//                    RC_STORAGE_PERMS, perm);
-//            return;
-//        }
+    @Override
+    public void onStop() {
+        super.onStop();
+    }
 
-        // Choose file storage location, must be listed in res/xml/file_paths.xml
-        File dir = new File(Environment.getExternalStorageDirectory() + "/photos");
-        File file = new File(dir, UUID.randomUUID().toString() + ".jpg");
+    @Override
+    public void onSaveInstanceState(Bundle out) {
+        super.onSaveInstanceState(out);
+        out.putParcelable(KEY_FILE_URI, mFileUri);
+        out.putParcelable(KEY_DOWNLOAD_URL, mDownloadUrl);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.d(TAG, "onActivityResult:" + requestCode + ":" + resultCode + ":" + data);
+        if (data != null && requestCode == RC_CHOOSE_VIDEO && resultCode == RESULT_OK) {
+            mFileUri = data.getData();
+            uploadFromUri(mFileUri);
+        } else if (requestCode == RC_TAKE_VIDEO && resultCode == RESULT_OK && mFileUri != null) {
+            uploadFromUri(mFileUri);
+        } else {
+            Toast.makeText(this, "Taking picture failed.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void uploadVideo() {
+        final CharSequence[] items = {getString(R.string.take_video),
+                getString(R.string.choose_video_from_gallary),
+                getString(R.string.dialog_choose_cancel)};
+        AlertDialog.Builder builder = new AlertDialog.Builder(NewPostActivity.this);
+        builder.setTitle(R.string.add_new_video);
+        builder.setItems(items, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int item) {
+                if (items[item].equals(getString(R.string.take_video))) {
+                    cameraIntent();
+                } else if (items[item].equals(getString(R.string.choose_video_from_gallary))) {
+                    galleryIntent();
+                } else if (items[item].equals(getString(R.string.dialog_choose_cancel))) {
+                    dialog.dismiss();
+                }
+            }
+        });
+        builder.show();
+    }
+
+    private void cameraIntent() {
+        File dir = new File(Environment.getExternalStorageDirectory() + "/Video/mult");
+        File file = new File(dir, UUID.randomUUID().toString() + ".mp4");
         try {
             // Create directory if it does not exist.
             if (!dir.exists()) {
@@ -237,27 +193,18 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         // Create content:// URI for file, required since Android N
         // See: https://developer.android.com/reference/android/support/v4/content/FileProvider.html
         mFileUri = FileProvider.getUriForFile(this,
-                "net.kultprosvet.androidcourse.socialapp", file);
+                "net.kultprosvet.androidcourse.socialapp.NewPostActivity", file);
 
-        // Create and launch the intent
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mFileUri);
-
-        startActivityForResult(takePictureIntent, RC_TAKE_PICTURE);
+        Intent takeVideoIntent = new Intent(android.provider.MediaStore.ACTION_VIDEO_CAPTURE);
+        takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, mFileUri);
+        startActivityForResult(takeVideoIntent, RC_TAKE_VIDEO);
     }
 
-    private void beginDownload() {
-        // Get path
-        String path = "photos/" + mFileUri.getLastPathSegment();
-
-        // Kick off download service
-        Intent intent = new Intent(this, MyDownloadService.class);
-        intent.setAction(MyDownloadService.ACTION_DOWNLOAD);
-        intent.putExtra(MyDownloadService.EXTRA_DOWNLOAD_PATH, path);
-        startService(intent);
-
-        // Show loading spinner
-        showProgressDialog();
+    private void galleryIntent() {
+        Intent takeVideoIntent = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
+        takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, mFileUri);
+        startActivityForResult(takeVideoIntent, RC_CHOOSE_VIDEO);
     }
 
     private void updateUI(FirebaseUser user) {
@@ -267,14 +214,6 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
         } else {
             ((TextView) findViewById(R.id.field_body)).setText(null);
         }
-    }
-
-    private void showMessageDialog(String title, String message) {
-        AlertDialog ad = new AlertDialog.Builder(this)
-                .setTitle(title)
-                .setMessage(message)
-                .create();
-        ad.show();
     }
 
     private void submitPost() {
@@ -354,16 +293,6 @@ public class NewPostActivity extends BaseActivity implements View.OnClickListene
             return true;
         } else {
             return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    public void onClick(View v) {
-        int i = v.getId();
-        if (i == R.id.button_camera) {
-            launchCamera();
-        } else if (i == R.id.button_download) {
-            beginDownload();
         }
     }
 }

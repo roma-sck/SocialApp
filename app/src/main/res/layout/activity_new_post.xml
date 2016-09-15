@@ -30,23 +30,6 @@
         android:maxLines="10"
         android:scrollHorizontally="false" />
 
-    <Button
-        android:id="@+id/button_camera"
-        android:layout_width="@dimen/standard_field_width"
-        android:layout_height="wrap_content"
-        android:text="@string/camera_button_text"
-        android:layout_alignTop="@+id/button_download"
-        android:layout_alignStart="@+id/field_body" />
-
-    <Button
-        android:id="@+id/button_download"
-        android:layout_width="@dimen/standard_field_width"
-        android:layout_height="wrap_content"
-        android:text="@string/download"
-        android:layout_marginTop="42dp"
-        android:layout_below="@+id/field_body"
-        android:layout_alignEnd="@+id/field_body" />
-
     <android.support.design.widget.FloatingActionButton
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/fab_submit_post"

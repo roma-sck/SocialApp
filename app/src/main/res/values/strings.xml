@@ -45,4 +45,10 @@
     <string name="success">Success</string>
     <string name="log_out">Log out</string>
 
+    <string name="take_video">Take Video</string>
+    <string name="choose_video_from_gallary">Choose from Library</string>
+    <string name="dialog_choose_cancel">Cancel</string>
+    <string name="add_new_video">Add new post video</string>
+    <string name="uploading">Uploading...</string>
+
 </resources>
