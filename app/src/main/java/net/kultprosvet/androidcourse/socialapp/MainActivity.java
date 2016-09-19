@@ -37,6 +37,7 @@ public class MainActivity extends BaseActivity {
     private DatabaseReference mDatabase;
     private FirebaseRecyclerAdapter<Post, PostViewHolder> mAdapter;
     private RecyclerView mRecycler;
+    private FloatingActionButton mFabAddPost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,10 +66,11 @@ public class MainActivity extends BaseActivity {
                 }
             }
         };
+        mFabAddPost = (FloatingActionButton) findViewById(R.id.fab_add_post);
         hideProgressDialog();
 
         // Button launches NewPostActivity
-        findViewById(R.id.fab_add_post).setOnClickListener(new View.OnClickListener() {
+        mFabAddPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, NewPostActivity.class));

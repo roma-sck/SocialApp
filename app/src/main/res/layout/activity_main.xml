@@ -51,7 +51,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignEnd="@+id/messages_list"
         android:layout_gravity="bottom|end"
-        app:layout_behavior=".utils.ActionBtnScrollBehavior"
+        app:layout_behavior=".utils.FabScrollBehavior"
         android:layout_marginRight="24dp"
         android:layout_marginBottom="43dp" />
 
