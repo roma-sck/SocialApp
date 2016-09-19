@@ -42,21 +42,21 @@ import pub.devrel.easypermissions.AfterPermissionGranted;
 
 public class NewPostActivity extends BaseActivity {
 
-    private static final String TAG = "NewPostActivity";
     private static final String REQUIRED = "Required";
-    private DatabaseReference mDatabase;
-    private EditText mTitleField;
-    private EditText mBodyField;
-
-    private static final int RC_TAKE_VIDEO = 101;
     private static final int RC_CHOOSE_VIDEO = 102;
     private static final int RC_STORAGE_PERMS = 103;
     private static final String KEY_FILE_URI = "key_file_uri";
     private static final String KEY_DOWNLOAD_URL = "key_download_url";
-
     public static final int MEDIA_TYPE_VIDEO = 2;
     private static final int CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE = 200;
-
+    private static final int VIDEO_QUALITY_HIGH = 1;
+    private static final String APP_PATH_PACKAGE = "net.kultprosvet.androidcourse.socialapp";
+    private static final String CHILD_FOLDER_NAME = "SocialAppVideo";
+    private static final String VIDEO_NAME_PREFIX = "VID_";
+    private static final String FILE_EXTENSION = ".mp4";
+    private DatabaseReference mDatabase;
+    private EditText mTitleField;
+    private EditText mBodyField;
     private FirebaseAuth mAuth;
     private Uri mDownloadUrl = null;
     private Uri mFileUri = null;
@@ -71,8 +71,8 @@ public class NewPostActivity extends BaseActivity {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mStorageRef = FirebaseStorage.getInstance().getReference();
 
-        mTitleField = (EditText) findViewById(R.id.field_title);
-        mBodyField = (EditText) findViewById(R.id.field_body);
+        mTitleField = (EditText) findViewById(R.id.field_post_title);
+        mBodyField = (EditText) findViewById(R.id.field_post_link);
         findViewById(R.id.fab_submit_post).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -88,21 +88,21 @@ public class NewPostActivity extends BaseActivity {
     }
 
     private void uploadFromUri(Uri fileUri) {
-        Log.d(TAG, "uploadFromUri:src:" + fileUri.toString());
-        grantUriPermission("net.kultprosvet.androidcourse.socialapp", fileUri,
+        grantUriPermission(APP_PATH_PACKAGE, fileUri,
                 Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
         // Get a reference to store file at photos/<FILENAME>.jpg
         final StorageReference photoRef = mStorageRef.child("media")
                 .child(fileUri.getLastPathSegment());
         // Upload file to Firebase Storage
         showProgressDialog();
-        Log.d(TAG, "uploadFromUri:dst:" + photoRef.getPath());
         photoRef.putFile(fileUri)
                 .addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        mDownloadUrl = taskSnapshot.getMetadata().getDownloadUrl();
-                        mBodyField.setText(mDownloadUrl.toString());
+                        if(taskSnapshot != null) {
+                            mDownloadUrl = taskSnapshot.getMetadata().getDownloadUrl();
+                            mBodyField.setText(mDownloadUrl.toString());
+                        }
                         hideProgressDialog();
                     }
                 })
@@ -111,7 +111,8 @@ public class NewPostActivity extends BaseActivity {
                     public void onFailure(@NonNull Exception exception) {
                         mDownloadUrl = null;
                         hideProgressDialog();
-                        Toast.makeText(getApplicationContext(), "Error: upload failed",
+                        Toast.makeText(getApplicationContext(),
+                                getString(R.string.error_toast_upload_failed),
                                 Toast.LENGTH_SHORT).show();
                     }
                 });
@@ -137,30 +138,32 @@ public class NewPostActivity extends BaseActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "onActivityResult:" + requestCode + ":" + resultCode + ":" + data);
-        if (data != null && requestCode == CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
-            mFileUri = data.getData();
+        if(data != null) mFileUri = data.getData();
+        if (requestCode == CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
             uploadFromUri(mFileUri);
-        } else if (requestCode == RC_CHOOSE_VIDEO && resultCode == RESULT_OK && mFileUri != null) {
+        } else if (requestCode == RC_CHOOSE_VIDEO && resultCode == RESULT_OK) {
             uploadFromUri(mFileUri);
         } else {
-            Toast.makeText(this, "Taking picture failed.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,
+                    getString(R.string.error_toast_taking_vid_failed),
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
     private void uploadVideo() {
-        final CharSequence[] items = {getString(R.string.take_video),
-                getString(R.string.choose_video_from_gallary),
+        final CharSequence[] items = {
+                getString(R.string.take_video_from_camera),
+                getString(R.string.choose_video_from_gallery),
                 getString(R.string.dialog_choose_cancel)};
         AlertDialog.Builder builder = new AlertDialog.Builder(NewPostActivity.this);
         builder.setTitle(R.string.add_new_video);
         builder.setItems(items, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
-                if (items[item].equals(getString(R.string.take_video))) {
-                    cameraIntent();
-                } else if (items[item].equals(getString(R.string.choose_video_from_gallary))) {
-                    galleryIntent();
+                if (items[item].equals(getString(R.string.take_video_from_camera))) {
+                    getCameraVideo();
+                } else if (items[item].equals(getString(R.string.choose_video_from_gallery))) {
+                    getGalleryVideo();
                 } else if (items[item].equals(getString(R.string.dialog_choose_cancel))) {
                     dialog.dismiss();
                 }
@@ -170,33 +173,27 @@ public class NewPostActivity extends BaseActivity {
     }
 
     @AfterPermissionGranted(RC_STORAGE_PERMS)
-    private void cameraIntent() {
+    private void getCameraVideo() {
         // create new Intentwith with Standard Intent action that can be
         // sent to have the camera application capture an video and return it.
         Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
         // create a file to save the video
-        mFileUri = getOutputMediaFileUri(MEDIA_TYPE_VIDEO);
+        mFileUri = Uri.fromFile(getOutputMediaFile(MEDIA_TYPE_VIDEO));
         // set the image file name
         intent.putExtra(MediaStore.EXTRA_OUTPUT, mFileUri);
         // set the video image quality to high
-        intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
+        intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, VIDEO_QUALITY_HIGH);
         startActivityForResult(intent, CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE);
-    }
-
-    /** Create a file Uri for saving an image or video */
-    private static Uri getOutputMediaFileUri(int type){
-        return Uri.fromFile(getOutputMediaFile(type));
     }
 
     /** Create a File for saving an image or video */
     private static File getOutputMediaFile(int type){
         // Check that the SDCard is mounted
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_PICTURES), "SocialAppVideo");
+                Environment.DIRECTORY_PICTURES), CHILD_FOLDER_NAME);
         // Create the storage directory(MyCameraVideo) if it does not exist
         if (! mediaStorageDir.exists()){
             if (! mediaStorageDir.mkdirs()){
-                Log.d("SocialAppVideo", "Failed to create directory MyCameraVideo.");
                 return null;
             }
         }
@@ -205,14 +202,14 @@ public class NewPostActivity extends BaseActivity {
         if(type == MEDIA_TYPE_VIDEO) {
             // For unique video file name appending current timeStamp with file name
             mediaFile = new File(mediaStorageDir.getPath() + File.separator +
-                    "VID_"+ UUID.randomUUID().toString() + ".mp4");
+                    VIDEO_NAME_PREFIX + UUID.randomUUID().toString() + FILE_EXTENSION);
         } else {
             return null;
         }
         return mediaFile;
     }
 
-    private void galleryIntent() {
+    private void getGalleryVideo() {
         Intent takeVideoIntent = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
         takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, mFileUri);
@@ -222,28 +219,25 @@ public class NewPostActivity extends BaseActivity {
     private void updateUI(FirebaseUser user) {
         // Download URL and Download button
         if (mDownloadUrl != null) {
-            ((TextView) findViewById(R.id.field_body)).setText(mDownloadUrl.toString());
+            ((TextView) findViewById(R.id.field_post_link)).setText(mDownloadUrl.toString());
         } else {
-            ((TextView) findViewById(R.id.field_body)).setText(null);
+            ((TextView) findViewById(R.id.field_post_link)).setText(null);
         }
     }
 
     private void submitPost() {
         final String title = mTitleField.getText().toString();
         final String body = mBodyField.getText().toString();
-
         // Title is required
         if (TextUtils.isEmpty(title)) {
             mTitleField.setError(REQUIRED);
             return;
         }
-
         // Body is required
         if (TextUtils.isEmpty(body)) {
             mBodyField.setError(REQUIRED);
             return;
         }
-
         // single_value_read]
         final String userId = getUid();
         mDatabase.child("users").child(userId).addListenerForSingleValueEvent(
@@ -252,59 +246,35 @@ public class NewPostActivity extends BaseActivity {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         // Get user value
                         User user = dataSnapshot.getValue(User.class);
-
                         if (user == null) {
                             // User is null, error out
-                            Log.e(TAG, "User " + userId + " is unexpectedly null");
                             Toast.makeText(NewPostActivity.this,
-                                    "Error: could not fetch user.",
+                                    getString(R.string.error_toast_not_fetch_user),
                                     Toast.LENGTH_SHORT).show();
                         } else {
                             // Write new post
                             writeNewPost(userId, user.username, title, body);
                         }
-
                         // Finish this Activity, back to the stream
                         finish();
                     }
-
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-                        Log.w(TAG, "getUser:onCancelled", databaseError.toException());
+                        String errorMsg = databaseError.getMessage();
+                        Toast.makeText(NewPostActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
-    // write_fan_out]
     private void writeNewPost(String userId, String username, String title, String body) {
         // Create new post at /user-posts/$userid/$postid and at
         // /posts/$postid simultaneously
         String key = mDatabase.child("posts").push().getKey();
         Post post = new Post(userId, username, title, body);
         Map<String, Object> postValues = post.toMap();
-
         Map<String, Object> childUpdates = new HashMap<>();
         childUpdates.put("/posts/" + key, postValues);
         childUpdates.put("/user-posts/" + userId + "/" + key, postValues);
-
         mDatabase.updateChildren(childUpdates);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int i = item.getItemId();
-        if (i == R.id.action_logout) {
-            mAuth.signOut();
-            updateUI(null);
-            return true;
-        } else {
-            return super.onOptionsItemSelected(item);
-        }
     }
 }

@@ -7,6 +7,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -45,14 +47,13 @@ public class MainActivity extends BaseActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle(getString(R.string.app_name));
         setSupportActionBar(toolbar);
-
         //get firebase auth instance
         mAuth = getFirebaseAuth();
-
         //get current user
         final FirebaseUser user = mAuth.getCurrentUser();
 
         showProgressDialog();
+
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -65,16 +66,13 @@ public class MainActivity extends BaseActivity {
                 }
             }
         };
-
         findViews();
-
         mBtnSignOut.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 signOut();
             }
         });
-
         // Button launches NewPostActivity
         mBtnAddPost.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,9 +80,7 @@ public class MainActivity extends BaseActivity {
                 startActivity(new Intent(MainActivity.this, NewPostActivity.class));
             }
         });
-
         updateUi(user);
-
         showPosts();
     }
 
@@ -170,7 +166,6 @@ public class MainActivity extends BaseActivity {
                 if (p == null) {
                     return Transaction.success(mutableData);
                 }
-
                 if (p.likes.containsKey(getUid())) {
                     // Unstar the post and remove self from stars
                     p.likesCount = p.likesCount - 1;
@@ -180,7 +175,6 @@ public class MainActivity extends BaseActivity {
                     p.likesCount = p.likesCount + 1;
                     p.likes.put(getUid(), true);
                 }
-
                 // Set value and report transaction success
                 mutableData.setValue(p);
                 return Transaction.success(mutableData);
@@ -235,6 +229,23 @@ public class MainActivity extends BaseActivity {
         super.onDestroy();
         if (mAdapter != null) {
             mAdapter.cleanup();
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int i = item.getItemId();
+        if (i == R.id.action_logout) {
+            mAuth.signOut();
+            return true;
+        } else {
+            return super.onOptionsItemSelected(item);
         }
     }
 }

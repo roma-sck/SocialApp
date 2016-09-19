@@ -6,26 +6,26 @@
     tools:context=".NewPostActivity">
 
     <EditText
-        android:id="@+id/field_title"
+        android:id="@+id/field_post_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
-        android:hint="Title"
+        android:hint="@string/post_title_hint"
         android:maxLines="1" />
 
     <EditText
-        android:id="@+id/field_body"
+        android:id="@+id/field_post_link"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/field_title"
+        android:layout_below="@+id/field_post_title"
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="5dp"
-        android:hint="Add your post..."
+        android:hint="@string/post_link_hint"
         android:inputType="textMultiLine"
         android:maxLines="10"
         android:scrollHorizontally="false" />
