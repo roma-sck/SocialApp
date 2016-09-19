@@ -23,15 +23,23 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/messages_list"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:scrollbars="vertical"
-        tools:listitem="@layout/item_post"
-        android:layout_alignParentStart="true"
-        android:paddingTop="55dp" />
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" >
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/messages_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:scrollbars="vertical"
+            tools:listitem="@layout/item_post"
+            android:layout_alignParentStart="true" />
+
+    </RelativeLayout>
 
     <android.support.design.widget.FloatingActionButton
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -43,6 +51,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignEnd="@+id/messages_list"
         android:layout_gravity="bottom|end"
+        app:layout_behavior=".utils.ActionBtnScrollBehavior"
         android:layout_marginRight="24dp"
         android:layout_marginBottom="43dp" />
 
