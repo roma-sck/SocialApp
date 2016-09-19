@@ -7,8 +7,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v4.content.FileProvider;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
@@ -36,10 +34,11 @@ import net.kultprosvet.androidcourse.socialapp.models.Post;
 import net.kultprosvet.androidcourse.socialapp.models.User;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+
+import pub.devrel.easypermissions.AfterPermissionGranted;
 
 public class NewPostActivity extends BaseActivity {
 
@@ -51,8 +50,12 @@ public class NewPostActivity extends BaseActivity {
 
     private static final int RC_TAKE_VIDEO = 101;
     private static final int RC_CHOOSE_VIDEO = 102;
+    private static final int RC_STORAGE_PERMS = 103;
     private static final String KEY_FILE_URI = "key_file_uri";
     private static final String KEY_DOWNLOAD_URL = "key_download_url";
+
+    public static final int MEDIA_TYPE_VIDEO = 2;
+    private static final int CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE = 200;
 
     private FirebaseAuth mAuth;
     private Uri mDownloadUrl = null;
@@ -63,7 +66,6 @@ public class NewPostActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_post);
-
         // Initialize Firebase Auth
         mAuth = getFirebaseAuth();
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -71,20 +73,17 @@ public class NewPostActivity extends BaseActivity {
 
         mTitleField = (EditText) findViewById(R.id.field_title);
         mBodyField = (EditText) findViewById(R.id.field_body);
-
         findViewById(R.id.fab_submit_post).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 submitPost();
             }
         });
-
         // Restore instance state
         if (savedInstanceState != null) {
             mFileUri = savedInstanceState.getParcelable(KEY_FILE_URI);
             mDownloadUrl = savedInstanceState.getParcelable(KEY_DOWNLOAD_URL);
         }
-
         uploadVideo();
     }
 
@@ -92,17 +91,11 @@ public class NewPostActivity extends BaseActivity {
         Log.d(TAG, "uploadFromUri:src:" + fileUri.toString());
         grantUriPermission("net.kultprosvet.androidcourse.socialapp", fileUri,
                 Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
-
-        // [START get_child_ref]
         // Get a reference to store file at photos/<FILENAME>.jpg
-        final StorageReference photoRef = mStorageRef.child("photos")
+        final StorageReference photoRef = mStorageRef.child("media")
                 .child(fileUri.getLastPathSegment());
-        // [END get_child_ref]
-
         // Upload file to Firebase Storage
-        // [START_EXCLUDE]
         showProgressDialog();
-        // [END_EXCLUDE]
         Log.d(TAG, "uploadFromUri:dst:" + photoRef.getPath());
         photoRef.putFile(fileUri)
                 .addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -145,10 +138,10 @@ public class NewPostActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         Log.d(TAG, "onActivityResult:" + requestCode + ":" + resultCode + ":" + data);
-        if (data != null && requestCode == RC_CHOOSE_VIDEO && resultCode == RESULT_OK) {
+        if (data != null && requestCode == CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
             mFileUri = data.getData();
             uploadFromUri(mFileUri);
-        } else if (requestCode == RC_TAKE_VIDEO && resultCode == RESULT_OK && mFileUri != null) {
+        } else if (requestCode == RC_CHOOSE_VIDEO && resultCode == RESULT_OK && mFileUri != null) {
             uploadFromUri(mFileUri);
         } else {
             Toast.makeText(this, "Taking picture failed.", Toast.LENGTH_SHORT).show();
@@ -176,28 +169,47 @@ public class NewPostActivity extends BaseActivity {
         builder.show();
     }
 
+    @AfterPermissionGranted(RC_STORAGE_PERMS)
     private void cameraIntent() {
-        File dir = new File(Environment.getExternalStorageDirectory() + "/Video/mult");
-        File file = new File(dir, UUID.randomUUID().toString() + ".mp4");
-        try {
-            // Create directory if it does not exist.
-            if (!dir.exists()) {
-                dir.mkdir();
+        // create new Intentwith with Standard Intent action that can be
+        // sent to have the camera application capture an video and return it.
+        Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        // create a file to save the video
+        mFileUri = getOutputMediaFileUri(MEDIA_TYPE_VIDEO);
+        // set the image file name
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, mFileUri);
+        // set the video image quality to high
+        intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
+        startActivityForResult(intent, CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE);
+    }
+
+    /** Create a file Uri for saving an image or video */
+    private static Uri getOutputMediaFileUri(int type){
+        return Uri.fromFile(getOutputMediaFile(type));
+    }
+
+    /** Create a File for saving an image or video */
+    private static File getOutputMediaFile(int type){
+        // Check that the SDCard is mounted
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), "SocialAppVideo");
+        // Create the storage directory(MyCameraVideo) if it does not exist
+        if (! mediaStorageDir.exists()){
+            if (! mediaStorageDir.mkdirs()){
+                Log.d("SocialAppVideo", "Failed to create directory MyCameraVideo.");
+                return null;
             }
-            boolean created = file.createNewFile();
-            Log.d(TAG, "file.createNewFile:" + file.getAbsolutePath() + ":" + created);
-        } catch (IOException e) {
-            Log.e(TAG, "file.createNewFile" + file.getAbsolutePath() + ":FAILED", e);
         }
-
-        // Create content:// URI for file, required since Android N
-        // See: https://developer.android.com/reference/android/support/v4/content/FileProvider.html
-        mFileUri = FileProvider.getUriForFile(this,
-                "net.kultprosvet.androidcourse.socialapp.NewPostActivity", file);
-
-        Intent takeVideoIntent = new Intent(android.provider.MediaStore.ACTION_VIDEO_CAPTURE);
-        takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, mFileUri);
-        startActivityForResult(takeVideoIntent, RC_TAKE_VIDEO);
+        // Create a media file name
+        File mediaFile;
+        if(type == MEDIA_TYPE_VIDEO) {
+            // For unique video file name appending current timeStamp with file name
+            mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                    "VID_"+ UUID.randomUUID().toString() + ".mp4");
+        } else {
+            return null;
+        }
+        return mediaFile;
     }
 
     private void galleryIntent() {
@@ -288,7 +300,7 @@ public class NewPostActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int i = item.getItemId();
         if (i == R.id.action_logout) {
-            FirebaseAuth.getInstance().signOut();
+            mAuth.signOut();
             updateUI(null);
             return true;
         } else {
