@@ -57,5 +57,7 @@
 
     <string name="post_title_hint">Title</string>
     <string name="post_link_hint">Post link</string>
+    <string name="user_info">User info</string>
+    <string name="dialog_info_title">Current user info</string>
 
 </resources>

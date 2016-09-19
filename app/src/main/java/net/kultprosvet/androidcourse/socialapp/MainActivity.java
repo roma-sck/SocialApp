@@ -3,6 +3,8 @@ package net.kultprosvet.androidcourse.socialapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -29,9 +31,7 @@ import net.kultprosvet.androidcourse.socialapp.viewholder.PostViewHolder;
 
 public class MainActivity extends BaseActivity {
 
-    private TextView mUserEmail, mUserId;
-    private Button mBtnAddPost;
-    private Button mBtnSignOut;
+    private FloatingActionButton mBtnAddPost;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseAuth mAuth;
     private static final String TAG = "MainActivity";
@@ -66,13 +66,9 @@ public class MainActivity extends BaseActivity {
                 }
             }
         };
-        findViews();
-        mBtnSignOut.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                signOut();
-            }
-        });
+        mBtnAddPost = (FloatingActionButton) findViewById(R.id.fab_add_post);
+        hideProgressDialog();
+
         // Button launches NewPostActivity
         mBtnAddPost.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,27 +76,11 @@ public class MainActivity extends BaseActivity {
                 startActivity(new Intent(MainActivity.this, NewPostActivity.class));
             }
         });
-        updateUi(user);
         showPosts();
     }
 
-    private void findViews() {
-        mUserEmail = (TextView) findViewById(R.id.user_email);
-        mUserId = (TextView) findViewById(R.id.user_id);
-        mBtnSignOut = (Button) findViewById(R.id.sign_out);
-        mBtnAddPost = (Button) findViewById(R.id.btn_new_post);
-
-        hideProgressDialog();
-    }
-
-    private void updateUi(FirebaseUser user) {
-        String userEmailText = getString(R.string.user_email_text)+ user.getEmail();
-        String userIdText = getString(R.string.user_id_text)+ user.getUid();
-        mUserEmail.setText(userEmailText);
-        mUserId.setText(userIdText);
-    }
-
     private void showPosts() {
+        showProgressDialog();
         mDatabase = FirebaseDatabase.getInstance().getReference();
         setUpRecyclerView();
         // Set up FirebaseRecyclerAdapter with the Query
@@ -146,6 +126,7 @@ public class MainActivity extends BaseActivity {
             }
         };
         mRecycler.setAdapter(mAdapter);
+        hideProgressDialog();
     }
 
     private void setUpRecyclerView() {
@@ -190,7 +171,7 @@ public class MainActivity extends BaseActivity {
     }
 
     public String getUid() {
-        return FirebaseAuth.getInstance().getCurrentUser().getUid();
+        return mAuth.getCurrentUser().getUid();
     }
 
     public Query getQuery(DatabaseReference databaseReference) {
@@ -244,8 +225,22 @@ public class MainActivity extends BaseActivity {
         if (i == R.id.action_logout) {
             mAuth.signOut();
             return true;
+        } else if (i == R.id.action_user_info) {
+            showInfoDialog(mAuth.getCurrentUser());
+            return true;
         } else {
             return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void showInfoDialog(FirebaseUser user) {
+        String userEmailText = getString(R.string.user_email_text)+ user.getEmail();
+        String userIdText = getString(R.string.user_id_text)+ user.getUid();
+        String userInfo = userEmailText + "\n" + userIdText;
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.dialog_info_title)
+                .setMessage(userInfo)
+                .create()
+                .show();
     }
 }
