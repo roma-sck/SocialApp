@@ -31,7 +31,6 @@ import net.kultprosvet.androidcourse.socialapp.viewholder.PostViewHolder;
 
 public class MainActivity extends BaseActivity {
 
-    private FloatingActionButton mBtnAddPost;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseAuth mAuth;
     private static final String TAG = "MainActivity";
@@ -66,11 +65,10 @@ public class MainActivity extends BaseActivity {
                 }
             }
         };
-        mBtnAddPost = (FloatingActionButton) findViewById(R.id.fab_add_post);
         hideProgressDialog();
 
         // Button launches NewPostActivity
-        mBtnAddPost.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.fab_add_post).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(MainActivity.this, NewPostActivity.class));
@@ -90,7 +88,6 @@ public class MainActivity extends BaseActivity {
             @Override
             protected void populateViewHolder(final PostViewHolder viewHolder, final Post model, final int position) {
                 final DatabaseReference postRef = getRef(position);
-
                 // Set click listener for the whole post view
                 final String postKey = postRef.getKey();
                 viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
