@@ -114,6 +114,7 @@ public class NewPostActivity extends BaseActivity {
                         Toast.makeText(getApplicationContext(),
                                 getString(R.string.error_toast_upload_failed),
                                 Toast.LENGTH_SHORT).show();
+                        finish();
                     }
                 });
     }
@@ -166,6 +167,7 @@ public class NewPostActivity extends BaseActivity {
                     getGalleryVideo();
                 } else if (items[item].equals(getString(R.string.dialog_choose_cancel))) {
                     dialog.dismiss();
+                    finish();
                 }
             }
         });
@@ -191,7 +193,7 @@ public class NewPostActivity extends BaseActivity {
         // Check that the SDCard is mounted
         File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES), CHILD_FOLDER_NAME);
-        // Create the storage directory(MyCameraVideo) if it does not exist
+        // Create the storage directory(SocialAppVideo) if it does not exist
         if (! mediaStorageDir.exists()){
             if (! mediaStorageDir.mkdirs()){
                 return null;
@@ -217,7 +219,6 @@ public class NewPostActivity extends BaseActivity {
     }
 
     private void updateUI(FirebaseUser user) {
-        // Download URL and Download button
         if (mDownloadUrl != null) {
             ((TextView) findViewById(R.id.field_post_link)).setText(mDownloadUrl.toString());
         } else {
