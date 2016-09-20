@@ -12,8 +12,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -118,8 +118,8 @@ public class MainActivity extends BaseActivity {
                         DatabaseReference userPostRef = mDatabase.child("user-posts").child(model.uid).child(postRef.getKey());
 
                         // Run two transactions
-                        onStarClicked(globalPostRef);
-                        onStarClicked(userPostRef);
+                        onLikeClicked(globalPostRef);
+                        onLikeClicked(userPostRef);
                     }
                 });
             }
@@ -138,7 +138,7 @@ public class MainActivity extends BaseActivity {
         mRecycler.setLayoutManager(manager);
     }
 
-    private void onStarClicked(DatabaseReference postRef) {
+    private void onLikeClicked(DatabaseReference postRef) {
         postRef.runTransaction(new Transaction.Handler() {
             @Override
             public Transaction.Result doTransaction(MutableData mutableData) {
