@@ -116,7 +116,7 @@ public class LoginActivity extends AppCompatActivity {
     private void findViews() {
         mInputEmail = (EditText) findViewById(R.id.email);
         mInputPassword = (EditText) findViewById(R.id.password);
-        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
         mBtnRegister = (Button) findViewById(R.id.btn_signup);
         mBtnLogin = (Button) findViewById(R.id.btn_login);
     }

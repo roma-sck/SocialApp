@@ -12,7 +12,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -31,29 +30,37 @@ import net.kultprosvet.androidcourse.socialapp.viewholder.PostViewHolder;
 
 public class MainActivity extends BaseActivity {
 
+    private static final String TAG = "MainActivity";
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseAuth mAuth;
-    private static final String TAG = "MainActivity";
     private DatabaseReference mDatabase;
     private FirebaseRecyclerAdapter<Post, PostViewHolder> mAdapter;
     private RecyclerView mRecycler;
-    private FloatingActionButton mFabAddPost;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(getString(R.string.app_name));
-        setSupportActionBar(toolbar);
+        setUpToolbar();
+        showProgressDialog();
+        initializeFirebase();
+
+        findViewById(R.id.fab_add_post).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Button launches NewPostActivity
+                startActivity(new Intent(MainActivity.this, NewPostActivity.class));
+            }
+        });
+        showPosts();
+    }
+
+    private void initializeFirebase() {
         //get firebase auth instance
         mAuth = getFirebaseAuth();
         //get current user
         final FirebaseUser user = mAuth.getCurrentUser();
-
-        showProgressDialog();
-
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -66,21 +73,15 @@ public class MainActivity extends BaseActivity {
                 }
             }
         };
-        mFabAddPost = (FloatingActionButton) findViewById(R.id.fab_add_post);
-        hideProgressDialog();
+    }
 
-        // Button launches NewPostActivity
-        mFabAddPost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, NewPostActivity.class));
-            }
-        });
-        showPosts();
+    private void setUpToolbar() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(getString(R.string.app_name));
+        setSupportActionBar(toolbar);
     }
 
     private void showPosts() {
-        showProgressDialog();
         mDatabase = FirebaseDatabase.getInstance().getReference();
         setUpRecyclerView();
         // Set up FirebaseRecyclerAdapter with the Query
@@ -104,9 +105,9 @@ public class MainActivity extends BaseActivity {
 
                 // Determine if the current user has liked this post and set UI accordingly
                 if (model.likes.containsKey(getUid())) {
-                    viewHolder.starView.setImageResource(R.drawable.ic_toggle_star_24);
+                    viewHolder.likesView.setImageResource(R.drawable.ic_toggle_star_24);
                 } else {
-                    viewHolder.starView.setImageResource(R.drawable.ic_toggle_star_outline_24);
+                    viewHolder.likesView.setImageResource(R.drawable.ic_toggle_star_outline_24);
                 }
 
                 // Bind Post to ViewHolder, setting OnClickListener for the star button
@@ -122,10 +123,11 @@ public class MainActivity extends BaseActivity {
                         onLikeClicked(userPostRef);
                     }
                 });
+                hideProgressDialog();
+                findViewById(R.id.list_layout).setVisibility(View.VISIBLE);
             }
         };
         mRecycler.setAdapter(mAdapter);
-        hideProgressDialog();
     }
 
     private void setUpRecyclerView() {
@@ -182,12 +184,6 @@ public class MainActivity extends BaseActivity {
     //sign out method
     public void signOut() {
         mAuth.signOut();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        hideProgressDialog();
     }
 
     @Override

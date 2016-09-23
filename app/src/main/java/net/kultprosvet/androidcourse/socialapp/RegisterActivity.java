@@ -144,7 +144,7 @@ public class RegisterActivity extends AppCompatActivity {
         mBtnRegister = (Button) findViewById(R.id.btn_register);
         mInputEmail = (EditText) findViewById(R.id.email);
         mInputPassword = (EditText) findViewById(R.id.password);
-        mProgressBar = (ProgressBar) findViewById(R.id.progressBar);
+        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
     }
 
     @Override

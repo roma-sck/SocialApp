@@ -6,5 +6,15 @@
     <dimen name="logo_w_h">100dp</dimen>
 
     <dimen name="standard_field_width">160dp</dimen>
+    <dimen name="img_login_margin">30dp</dimen>
+    <dimen name="email_field_margin">10dp</dimen>
+    <dimen name="password_field_margin">10dp</dimen>
+    <dimen name="btn_login_margin">20dp</dimen>
+    <dimen name="btn_signup_text_size">15sp</dimen>
+    <dimen name="progress_bar_size">30dp</dimen>
+    <dimen name="progress_bar_margin">20dp</dimen>
+    <dimen name="recyclerview_padding">8dp</dimen>
+    <dimen name="fab_margin_right">24dp</dimen>
+    <dimen name="fab_margin_bottom">43dp</dimen>
 
 </resources>

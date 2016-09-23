@@ -21,7 +21,7 @@
             android:layout_width="@dimen/logo_w_h"
             android:layout_height="@dimen/logo_w_h"
             android:layout_gravity="center_horizontal"
-            android:layout_marginBottom="30dp"
+            android:layout_marginBottom="@dimen/img_login_margin"
             android:src="@mipmap/ic_launcher" />
 
         <android.support.design.widget.TextInputLayout
@@ -32,7 +32,7 @@
                 android:id="@+id/email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="@dimen/email_field_margin"
                 android:hint="@string/hint_email"
                 android:inputType="textEmailAddress"
                 android:textColor="@android:color/white"
@@ -47,7 +47,7 @@
                 android:id="@+id/password"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="@dimen/password_field_margin"
                 android:hint="@string/hint_password"
                 android:inputType="textPassword"
                 android:textColor="@android:color/white"
@@ -60,7 +60,7 @@
             android:id="@+id/btn_login"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dip"
+            android:layout_marginTop="@dimen/btn_login_margin"
             android:background="@color/colorAccent"
             android:text="@string/btn_login"
             android:textColor="@android:color/black" />
@@ -71,19 +71,20 @@
             android:id="@+id/btn_signup"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dip"
+            android:layout_marginTop="@dimen/btn_login_margin"
             android:background="@null"
             android:text="@string/btn_link_to_register"
             android:textAllCaps="false"
             android:textColor="@color/white"
-            android:textSize="15dp" />
+            android:textSize="@dimen/btn_signup_text_size" />
     </LinearLayout>
 
     <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:id="@+id/progress_bar"
+        android:layout_width="@dimen/progress_bar_size"
+        android:layout_height="@dimen/progress_bar_size"
         android:layout_gravity="center|bottom"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="@dimen/progress_bar_margin"
         android:visibility="gone" />
+
 </android.support.design.widget.CoordinatorLayout>

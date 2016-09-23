@@ -9,6 +9,12 @@ import java.util.Map;
 @IgnoreExtraProperties
 public class Post {
 
+    private static final String UID = "uid";
+    private static final String AUTHOR = "author";
+    private static final String TITLE = "title";
+    private static final String BODY = "body";
+    private static final String LIKES_COUNT = "likesCount";
+    private static final String LIKES = "likes";
     public String uid;
     public String author;
     public String title;
@@ -31,12 +37,18 @@ public class Post {
     @Exclude
     public Map<String, Object> toMap() {
         HashMap<String, Object> result = new HashMap<>();
-        result.put("uid", uid);
-        if (author!=null)result.put("author", author);
-        if (title!=null) result.put("title", title);
-        result.put("body", body);
-        result.put("likesCount", likesCount);
-        result.put("likes", likes);
+        result.put(UID, uid);
+        if (author != null) {
+            result.put(AUTHOR, author);
+        }
+        if (title != null) {
+            result.put(TITLE, title);
+        }
+        if(body != null) {
+            result.put(BODY, body);
+        }
+        result.put(LIKES_COUNT, likesCount);
+        result.put(LIKES, likes);
 
         return result;
     }
