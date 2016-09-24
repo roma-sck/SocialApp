@@ -118,8 +118,6 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                 }
             }
 
-
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Toast.makeText(PostDetailActivity.this,
