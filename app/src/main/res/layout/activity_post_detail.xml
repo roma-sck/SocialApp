@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context=".PostDetailActivity">
+    tools:context=".ui.PostDetailActivity">
 
     <include
         android:id="@+id/post_author_layout"
@@ -25,7 +25,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:textStyle="bold"
-        tools:text="My First Post"
+        tools:text="@string/my_post_text"
         android:layout_below="@+id/post_author_layout"
         android:layout_alignParentStart="true" />
 
@@ -44,24 +44,24 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_below="@+id/post_body"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="@dimen/comment_form_margin"
         android:weightSum="1.0">
 
         <EditText
             android:id="@+id/field_comment_text"
-            android:layout_width="0dp"
+            android:layout_width="@dimen/width_0dp"
             android:layout_weight="0.8"
             android:layout_height="wrap_content"
             android:maxLines="1"
-            android:hint="Write a comment..."/>
+            android:hint="@string/field_comment_hint_text"/>
 
         <Button
             android:id="@+id/button_post_comment"
             style="@style/Base.Widget.AppCompat.Button.Borderless"
-            android:layout_width="0dp"
+            android:layout_width="@dimen/width_0dp"
             android:layout_weight="0.2"
             android:layout_height="wrap_content"
-            android:text="Post"/>
+            android:text="@string/btn_post_comment_text"/>
 
     </LinearLayout>
 

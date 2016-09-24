@@ -1,4 +1,4 @@
-package net.kultprosvet.androidcourse.socialapp;
+package net.kultprosvet.androidcourse.socialapp.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,15 +19,21 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import net.kultprosvet.androidcourse.socialapp.R;
 import net.kultprosvet.androidcourse.socialapp.models.User;
 
+import static net.kultprosvet.androidcourse.socialapp.Const.USERS;
+
 public class RegisterActivity extends AppCompatActivity {
+
+    private static final String AT_SYMBOL = "@";
+    public static final int MIN_PASSWRD_LENGTH = 6;
+    private static final int ZERO_VALUE = 0;
 
     private EditText mInputEmail, mInputPassword;
     private Button mBtnSignIn, mBtnRegister;
     private ProgressBar mProgressBar;
     private FirebaseAuth mAuth;
-    public static final int MIN_PASSWRD_LENGTH = 6;
     private DatabaseReference mDatabase;
 
     @Override
@@ -35,12 +41,18 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        //Get Firebase auth instance
-        mAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+        initializeFirebase();
 
         findViews();
+        setOnClickMethods();
+    }
 
+    private void initializeFirebase() {
+        mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+    }
+
+    private void setOnClickMethods() {
         mBtnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -127,8 +139,8 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private String usernameFromEmail(String email) {
-        if (email.contains("@")) {
-            return email.split("@")[0];
+        if (email.contains(AT_SYMBOL)) {
+            return email.split(AT_SYMBOL)[ZERO_VALUE];
         } else {
             return email;
         }
@@ -136,7 +148,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void writeNewUser(String userId, String name, String email) {
         User user = new User(name, email);
-        mDatabase.child("users").child(userId).setValue(user);
+        mDatabase.child(USERS).child(userId).setValue(user);
     }
 
     private void findViews() {

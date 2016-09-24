@@ -60,5 +60,17 @@
     <string name="user_info">User info</string>
     <string name="dialog_info_title">Current user info</string>
     <string name="db_on_complete_msg">postTransaction:onComplete:</string>
+    <string name="must_pass_extra_key">Must pass EXTRA_POST_KEY</string>
+    <string name="failed_load_post">Failed to load post.</string>
+    <string name="failed_load_comments">Failed to load comments.</string>
+    <string name="on_cancelled_err">onCancelled:</string>
+    <string name="my_post_text">My First Post</string>
+    <string name="field_comment_hint_text">Write a comment...</string>
+    <string name="btn_post_comment_text">Post</string>
+    <string name="loading_text">Loading...</string>
+    <string name="post_author_text">someauthor@email.com</string>
+    <string name="post_body_text">test text text link</string>
+    <string name="comment_author_text">John Doe</string>
+    <string name="comment_body_text">This is the comment text..</string>
 
 </resources>

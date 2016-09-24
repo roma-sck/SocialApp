@@ -1,4 +1,4 @@
-package net.kultprosvet.androidcourse.socialapp;
+package net.kultprosvet.androidcourse.socialapp.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,7 +10,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,15 +22,18 @@ import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.Transaction;
 
+import net.kultprosvet.androidcourse.socialapp.R;
 import net.kultprosvet.androidcourse.socialapp.models.Post;
 import net.kultprosvet.androidcourse.socialapp.viewholder.PostViewHolder;
+
+import static net.kultprosvet.androidcourse.socialapp.Const.POSTS;
 
 public class MainActivity extends BaseActivity {
 
     private static final int POSTS_QUERY_LIMIT = 100;
     private static final int ONE_LIKE = 1;
-    private static final String POSTS = "posts";
     private static final String USER_POSTS = "user-posts";
+
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
@@ -167,9 +169,6 @@ public class MainActivity extends BaseActivity {
             public void onComplete(DatabaseError databaseError, boolean b,
                                    DataSnapshot dataSnapshot) {
                 // Transaction completed
-                Toast.makeText(getApplicationContext(),
-                        getString(R.string.db_on_complete_msg)+ databaseError,
-                        Toast.LENGTH_SHORT).show();
             }
         });
     }

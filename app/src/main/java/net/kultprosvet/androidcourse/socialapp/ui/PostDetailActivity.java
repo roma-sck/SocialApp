@@ -1,16 +1,13 @@
-package net.kultprosvet.androidcourse.socialapp;
+package net.kultprosvet.androidcourse.socialapp.ui;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +18,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import net.kultprosvet.androidcourse.socialapp.R;
 import net.kultprosvet.androidcourse.socialapp.models.Comment;
 import net.kultprosvet.androidcourse.socialapp.models.Post;
 import net.kultprosvet.androidcourse.socialapp.models.User;
@@ -28,11 +26,13 @@ import net.kultprosvet.androidcourse.socialapp.models.User;
 import java.util.ArrayList;
 import java.util.List;
 
+import static net.kultprosvet.androidcourse.socialapp.Const.POSTS;
+import static net.kultprosvet.androidcourse.socialapp.Const.USERS;
+
 public class PostDetailActivity extends BaseActivity implements View.OnClickListener {
 
-    private static final String TAG = "PostDetailActivity";
-
     public static final String EXTRA_POST_KEY = "post_key";
+    private static final String POSTS_COMMENTS = "post-comments";
 
     private DatabaseReference mPostReference;
     private DatabaseReference mCommentsReference;
@@ -44,7 +44,6 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
     private TextView mTitleView;
     private TextView mBodyView;
     private EditText mCommentField;
-    private Button mCommentButton;
     private RecyclerView mCommentsRecycler;
 
     @Override
@@ -55,7 +54,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
         // Get post key from intent
         mPostKey = getIntent().getStringExtra(EXTRA_POST_KEY);
         if (mPostKey == null) {
-            throw new IllegalArgumentException("Must pass EXTRA_POST_KEY");
+            throw new IllegalArgumentException(getString(R.string.must_pass_extra_key));
         }
 
         initializeFirebase();
@@ -64,9 +63,9 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
 
     private void initializeFirebase() {
         mPostReference = FirebaseDatabase.getInstance().getReference()
-                .child("posts").child(mPostKey);
+                .child(POSTS).child(mPostKey);
         mCommentsReference = FirebaseDatabase.getInstance().getReference()
-                .child("post-comments").child(mPostKey);
+                .child(POSTS_COMMENTS).child(mPostKey);
     }
 
     private void findViews() {
@@ -74,10 +73,9 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
         mTitleView = (TextView) findViewById(R.id.post_title);
         mBodyView = (TextView) findViewById(R.id.post_body);
         mCommentField = (EditText) findViewById(R.id.field_comment_text);
-        mCommentButton = (Button) findViewById(R.id.button_post_comment);
         mCommentsRecycler = (RecyclerView) findViewById(R.id.recycler_comments);
 
-        mCommentButton.setOnClickListener(this);
+        findViewById(R.id.button_post_comment).setOnClickListener(this);
         mCommentsRecycler.setLayoutManager(new LinearLayoutManager(this));
     }
 
@@ -97,7 +95,8 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Toast.makeText(PostDetailActivity.this, "Failed to load post." + databaseError.toException(),
+                Toast.makeText(PostDetailActivity.this,
+                        getString(R.string.failed_load_post) + databaseError.toException(),
                         Toast.LENGTH_SHORT).show();
             }
         };
@@ -131,7 +130,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
 
     private void postComment() {
         final String uid = getUid();
-        FirebaseDatabase.getInstance().getReference().child("users").child(uid)
+        FirebaseDatabase.getInstance().getReference().child(USERS).child(uid)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -143,14 +142,15 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                         Comment comment = new Comment(uid, authorName, commentText);
                         // Push the comment, it will appear in the list
                         mCommentsReference.push().setValue(comment);
-
                         // Clear the field
                         mCommentField.setText(null);
                     }
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-
+                        Toast.makeText(PostDetailActivity.this,
+                                getString(R.string.on_cancelled_err) + databaseError.toException(),
+                                Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -170,6 +170,8 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
 
     private static class CommentAdapter extends RecyclerView.Adapter<CommentViewHolder> {
 
+        private static final int WRONG_COMMENT_INDEX = -1;
+        private static final int ONE_VALUE = 1;
         private Context mContext;
         private DatabaseReference mDatabaseReference;
         private ChildEventListener mChildEventListener;
@@ -190,7 +192,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                     // Update RecyclerView
                     mCommentIds.add(dataSnapshot.getKey());
                     mComments.add(comment);
-                    notifyItemInserted(mComments.size() - 1);
+                    notifyItemInserted(mComments.size() - ONE_VALUE);
                 }
 
                 @Override
@@ -201,13 +203,11 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                     String commentKey = dataSnapshot.getKey();
 
                     int commentIndex = mCommentIds.indexOf(commentKey);
-                    if (commentIndex > -1) {
+                    if (commentIndex > WRONG_COMMENT_INDEX) {
                         // Replace with the new data
                         mComments.set(commentIndex, newComment);
                         // Update the RecyclerView
                         notifyItemChanged(commentIndex);
-                    } else {
-                        Log.w(TAG, "onChildChanged:unknown_child:" + commentKey);
                     }
                 }
 
@@ -218,14 +218,12 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                     String commentKey = dataSnapshot.getKey();
 
                     int commentIndex = mCommentIds.indexOf(commentKey);
-                    if (commentIndex > -1) {
+                    if (commentIndex > WRONG_COMMENT_INDEX) {
                         // Remove data from the list
                         mCommentIds.remove(commentIndex);
                         mComments.remove(commentIndex);
                         // Update the RecyclerView
                         notifyItemRemoved(commentIndex);
-                    } else {
-                        Log.w(TAG, "onChildRemoved:unknown_child:" + commentKey);
                     }
                 }
 
@@ -239,8 +237,8 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
 
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
-                    Log.w(TAG, "postComments:onCancelled", databaseError.toException());
-                    Toast.makeText(mContext, "Failed to load comments.",
+                    Toast.makeText(mContext, mContext.getString(R.string.failed_load_comments)
+                            + databaseError.toException(),
                             Toast.LENGTH_SHORT).show();
                 }
             };
@@ -273,6 +271,5 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                 mDatabaseReference.removeEventListener(mChildEventListener);
             }
         }
-
     }
 }

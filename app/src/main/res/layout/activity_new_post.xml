@@ -3,16 +3,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".NewPostActivity">
+    tools:context=".ui.NewPostActivity">
 
     <EditText
         android:id="@+id/field_post_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginBottom="@dimen/field_post_title_margin_bottom"
+        android:layout_marginLeft="@dimen/field_post_title_margin"
+        android:layout_marginRight="@dimen/field_post_title_margin"
+        android:layout_marginTop="@dimen/field_post_title_margin"
         android:hint="@string/post_title_hint"
         android:maxLines="1" />
 
@@ -21,10 +21,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/field_post_title"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginBottom="@dimen/field_post_link_margin_bottom_top"
+        android:layout_marginLeft="@dimen/field_post_link_margin_left_right"
+        android:layout_marginRight="@dimen/field_post_link_margin_left_right"
+        android:layout_marginTop="@dimen/field_post_link_margin_bottom_top"
         android:hint="@string/post_link_hint"
         android:inputType="textMultiLine"
         android:maxLines="10"
@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_margin="16dp"
+        android:layout_margin="@dimen/fab_margin"
         app:backgroundTint="@color/fab_color"
         android:src="@drawable/ic_navigation_check_24"/>
 

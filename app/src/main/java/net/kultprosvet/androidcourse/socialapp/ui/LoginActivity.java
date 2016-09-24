@@ -1,4 +1,4 @@
-package net.kultprosvet.androidcourse.socialapp;
+package net.kultprosvet.androidcourse.socialapp.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -17,6 +17,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+import net.kultprosvet.androidcourse.socialapp.R;
+
 public class LoginActivity extends AppCompatActivity {
 
     private EditText mInputEmail, mInputPassword;
@@ -28,14 +30,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //Get Firebase auth instance
-        mAuth = FirebaseAuth.getInstance();
-
-        if (mAuth.getCurrentUser() != null) {
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-            finish();
-        }
-
+        initializeFirebase();
         // set the view now
         setContentView(R.layout.activity_login);
 
@@ -43,10 +38,27 @@ public class LoginActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         findViews();
+        setOnClickMethods();
+    }
 
-        //Get Firebase auth instance
+    private void initializeFirebase() {
         mAuth = FirebaseAuth.getInstance();
 
+        if (mAuth.getCurrentUser() != null) {
+            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            finish();
+        }
+    }
+
+    private void findViews() {
+        mInputEmail = (EditText) findViewById(R.id.email);
+        mInputPassword = (EditText) findViewById(R.id.password);
+        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
+        mBtnRegister = (Button) findViewById(R.id.btn_signup);
+        mBtnLogin = (Button) findViewById(R.id.btn_login);
+    }
+
+    private void setOnClickMethods() {
         mBtnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -111,13 +123,5 @@ public class LoginActivity extends AppCompatActivity {
                         });
             }
         });
-    }
-
-    private void findViews() {
-        mInputEmail = (EditText) findViewById(R.id.email);
-        mInputPassword = (EditText) findViewById(R.id.password);
-        mProgressBar = (ProgressBar) findViewById(R.id.progress_bar);
-        mBtnRegister = (Button) findViewById(R.id.btn_signup);
-        mBtnLogin = (Button) findViewById(R.id.btn_login);
     }
 }

@@ -1,4 +1,4 @@
-package net.kultprosvet.androidcourse.socialapp;
+package net.kultprosvet.androidcourse.socialapp.ui;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,9 +9,6 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -30,6 +27,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import net.kultprosvet.androidcourse.socialapp.R;
 import net.kultprosvet.androidcourse.socialapp.models.Post;
 import net.kultprosvet.androidcourse.socialapp.models.User;
 
@@ -40,20 +38,28 @@ import java.util.UUID;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 
+import static net.kultprosvet.androidcourse.socialapp.Const.POSTS;
+import static net.kultprosvet.androidcourse.socialapp.Const.USERS;
+
 public class NewPostActivity extends BaseActivity {
 
-    private static final String REQUIRED = "Required";
     private static final int RC_CHOOSE_VIDEO = 102;
     private static final int RC_STORAGE_PERMS = 103;
-    private static final String KEY_FILE_URI = "key_file_uri";
-    private static final String KEY_DOWNLOAD_URL = "key_download_url";
     public static final int MEDIA_TYPE_VIDEO = 2;
     private static final int CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE = 200;
     private static final int VIDEO_QUALITY_HIGH = 1;
+    private static final String MEDIA = "media";
+    private static final String REQUIRED = "Required";
+    private static final String KEY_FILE_URI = "key_file_uri";
+    private static final String KEY_DOWNLOAD_URL = "key_download_url";
     private static final String APP_PATH_PACKAGE = "net.kultprosvet.androidcourse.socialapp";
     private static final String CHILD_FOLDER_NAME = "SocialAppVideo";
     private static final String VIDEO_NAME_PREFIX = "VID_";
     private static final String FILE_EXTENSION = ".mp4";
+    private static final String POSTS_SLASH = "/posts/";
+    private static final String USER_POSTS_SLASH = "/user-posts/";
+    private static final String SLASH = "/";
+
     private DatabaseReference mDatabase;
     private EditText mTitleField;
     private EditText mBodyField;
@@ -66,19 +72,10 @@ public class NewPostActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_post);
-        // Initialize Firebase Auth
-        mAuth = getFirebaseAuth();
-        mDatabase = FirebaseDatabase.getInstance().getReference();
-        mStorageRef = FirebaseStorage.getInstance().getReference();
 
-        mTitleField = (EditText) findViewById(R.id.field_post_title);
-        mBodyField = (EditText) findViewById(R.id.field_post_link);
-        findViewById(R.id.fab_submit_post).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                submitPost();
-            }
-        });
+        initializeFirebase();
+
+        findViews();
         // Restore instance state
         if (savedInstanceState != null) {
             mFileUri = savedInstanceState.getParcelable(KEY_FILE_URI);
@@ -87,11 +84,28 @@ public class NewPostActivity extends BaseActivity {
         uploadVideo();
     }
 
+    private void findViews() {
+        mTitleField = (EditText) findViewById(R.id.field_post_title);
+        mBodyField = (EditText) findViewById(R.id.field_post_link);
+        findViewById(R.id.fab_submit_post).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                submitPost();
+            }
+        });
+    }
+
+    private void initializeFirebase() {
+        mAuth = getFirebaseAuth();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mStorageRef = FirebaseStorage.getInstance().getReference();
+    }
+
     private void uploadFromUri(Uri fileUri) {
         grantUriPermission(APP_PATH_PACKAGE, fileUri,
                 Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
         // Get a reference to store file at photos/<FILENAME>.jpg
-        final StorageReference photoRef = mStorageRef.child("media")
+        final StorageReference photoRef = mStorageRef.child(MEDIA)
                 .child(fileUri.getLastPathSegment());
         // Upload file to Firebase Storage
         showProgressDialog();
@@ -241,7 +255,7 @@ public class NewPostActivity extends BaseActivity {
         }
         // single_value_read]
         final String userId = getUid();
-        mDatabase.child("users").child(userId).addListenerForSingleValueEvent(
+        mDatabase.child(USERS).child(userId).addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -270,12 +284,12 @@ public class NewPostActivity extends BaseActivity {
     private void writeNewPost(String userId, String username, String title, String body) {
         // Create new post at /user-posts/$userid/$postid and at
         // /posts/$postid simultaneously
-        String key = mDatabase.child("posts").push().getKey();
+        String key = mDatabase.child(POSTS).push().getKey();
         Post post = new Post(userId, username, title, body);
         Map<String, Object> postValues = post.toMap();
         Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put("/posts/" + key, postValues);
-        childUpdates.put("/user-posts/" + userId + "/" + key, postValues);
+        childUpdates.put(POSTS_SLASH + key, postValues);
+        childUpdates.put(USER_POSTS_SLASH + userId + SLASH + key, postValues);
         mDatabase.updateChildren(childUpdates);
     }
 }

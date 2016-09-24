@@ -6,8 +6,8 @@
 
     <ImageView
         android:id="@+id/comment_photo"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+        android:layout_width="@dimen/comment_photo_size"
+        android:layout_height="@dimen/comment_photo_size"
         android:layout_centerVertical="true"
         android:src="@drawable/ic_action_account_circle_40"/>
 
@@ -15,8 +15,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_marginLeft="10dp"
-        android:padding="5dp"
+        android:layout_marginLeft="@dimen/comment_layout_margin"
+        android:padding="@dimen/comment_layout_padding"
         android:layout_toRightOf="@+id/comment_photo">
 
         <TextView
@@ -24,14 +24,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            tools:text="John Doe" />
+            tools:text="@string/comment_author_text" />
 
         <TextView
             android:id="@+id/comment_body"
             style="@style/TextAppearance.AppCompat.Small"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            tools:text="This is the comment text.."/>
+            tools:text="@string/comment_body_text"/>
 
     </LinearLayout>
 

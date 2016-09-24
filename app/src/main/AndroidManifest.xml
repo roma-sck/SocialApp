@@ -20,7 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".LoginActivity"
+            android:name=".ui.LoginActivity"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,24 +29,24 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".RegisterActivity"
+            android:name=".ui.RegisterActivity"
             android:label="@string/title_activity_login"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
             android:label="@string/title_activity_profile"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".NewPostActivity"/>
+            android:name=".ui.NewPostActivity"/>
         <activity
-            android:name=".PostDetailActivity"/>
+            android:name=".ui.PostDetailActivity"/>
         <!--
           Android N SDK has new restrictions around sharing file:// URIs
           https://developer.android.com/reference/android/support/v4/content/FileProvider.html#ProviderDefinition
         -->
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="net.kultprosvet.androidcourse.socialapp.NewPostActivity"
+            android:authorities="net.kultprosvet.androidcourse.socialapp.ui.NewPostActivity"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

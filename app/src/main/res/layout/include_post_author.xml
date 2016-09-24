@@ -17,8 +17,8 @@
         style="@style/Base.TextAppearance.AppCompat.Small"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="@dimen/post_author_margin"
         android:gravity="center_vertical"
-        tools:text="someauthor@email.com" />
+        tools:text="@string/post_author_text" />
 
 </LinearLayout>

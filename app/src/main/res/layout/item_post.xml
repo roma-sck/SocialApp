@@ -3,12 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="5dp">
+    android:layout_margin="@dimen/item_post_margin">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="10dp">
+        android:padding="@dimen/item_post_layout_padding">
 
         <include
             android:id="@+id/post_author_layout"
@@ -31,8 +31,8 @@
                 android:id="@+id/post_like"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="5dp"
+                android:layout_marginLeft="@dimen/post_like_margin_left"
+                android:layout_marginRight="@dimen/post_like_margin_right"
                 android:background="?attr/selectableItemBackground"
                 android:src="@drawable/ic_toggle_star_outline_24" />
 
@@ -49,8 +49,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/post_author_layout"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="10dp" />
+            android:layout_marginLeft="@dimen/inc_post_text_margin_left"
+            android:layout_marginTop="@dimen/inc_post_text_margin_top" />
 
     </RelativeLayout>
 
