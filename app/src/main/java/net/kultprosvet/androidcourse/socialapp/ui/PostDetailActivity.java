@@ -1,6 +1,8 @@
 package net.kultprosvet.androidcourse.socialapp.ui;
 
 import android.content.Context;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -8,8 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.MediaController;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -33,6 +38,8 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
 
     public static final String EXTRA_POST_KEY = "post_key";
     private static final String POSTS_COMMENTS = "post-comments";
+    private static final String HTTPS_TEXT = "https";
+    private static final int REQUEST_FOCUS_DIRECTION = 0;
 
     private DatabaseReference mPostReference;
     private DatabaseReference mCommentsReference;
@@ -45,6 +52,8 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
     private TextView mBodyView;
     private EditText mCommentField;
     private RecyclerView mCommentsRecycler;
+    private VideoView mVideoView;
+    private ProgressBar mVideoLoadProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +83,8 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
         mBodyView = (TextView) findViewById(R.id.post_body);
         mCommentField = (EditText) findViewById(R.id.field_comment_text);
         mCommentsRecycler = (RecyclerView) findViewById(R.id.recycler_comments);
+        mVideoView = (VideoView) findViewById(R.id.video_view);
+        mVideoLoadProgress = (ProgressBar) findViewById(R.id.video_load_progressbar);
 
         findViewById(R.id.button_post_comment).setOnClickListener(this);
         mCommentsRecycler.setLayoutManager(new LinearLayoutManager(this));
@@ -91,7 +102,23 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                 mAuthorView.setText(post.author);
                 mTitleView.setText(post.title);
                 mBodyView.setText(post.body);
+                final String videoSource = post.body;
+                if(videoSource != null && videoSource.contains(HTTPS_TEXT)) {
+                    mVideoView.setVideoURI(Uri.parse(videoSource));
+                    mVideoView.setMediaController(new MediaController(PostDetailActivity.this));
+                    mVideoView.requestFocus(REQUEST_FOCUS_DIRECTION);
+                    mVideoLoadProgress.setVisibility(View.VISIBLE);
+                    mVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                        @Override
+                        public void onPrepared(MediaPlayer mp) {
+                            mVideoLoadProgress.setVisibility(View.GONE);
+                            mVideoView.start();
+                        }
+                    });
+                }
             }
+
+
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -238,7 +265,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                 @Override
                 public void onCancelled(DatabaseError databaseError) {
                     Toast.makeText(mContext, mContext.getString(R.string.failed_load_comments)
-                            + databaseError.toException(),
+                                    + databaseError.toException(),
                             Toast.LENGTH_SHORT).show();
                 }
             };

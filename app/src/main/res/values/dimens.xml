@@ -16,7 +16,7 @@
     <dimen name="recyclerview_padding">8dp</dimen>
     <dimen name="fab_margin_right">24dp</dimen>
     <dimen name="fab_margin_bottom">43dp</dimen>
-    <dimen name="comment_form_margin">20dp</dimen>
+    <dimen name="comment_form_margin">10dp</dimen>
     <dimen name="width_0dp">0dp</dimen>
     <dimen name="field_post_title_margin">16dp</dimen>
     <dimen name="field_post_title_margin_bottom">5dp</dimen>
@@ -35,5 +35,7 @@
     <dimen name="post_like_margin_right">5dp</dimen>
     <dimen name="inc_post_text_margin_left">5dp</dimen>
     <dimen name="inc_post_text_margin_top">10dp</dimen>
+    <dimen name="video_layout_height">300dp</dimen>
+    <dimen name="video_view_margin">10dp</dimen>
 
 </resources>
