@@ -22,25 +22,6 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <!--<RelativeLayout-->
-        <!--android:id="@+id/progress_bar_layout"-->
-        <!--android:visibility="visible"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:paddingLeft="@dimen/recyclerview_padding"-->
-        <!--android:paddingRight="@dimen/recyclerview_padding"-->
-        <!--app:layout_behavior="@string/appbar_scrolling_view_behavior" >-->
-
-        <!--<ProgressBar-->
-            <!--style="?android:attr/progressBarStyleLarge"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_centerHorizontal="true"-->
-            <!--android:layout_centerVertical="true"-->
-            <!--android:id="@+id/progress_bar_large_main" />-->
-
-    <!--</RelativeLayout>-->
-
     <RelativeLayout
         android:id="@+id/list_layout"
         android:layout_width="match_parent"

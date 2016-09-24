@@ -59,5 +59,6 @@
     <string name="post_link_hint">Post link</string>
     <string name="user_info">User info</string>
     <string name="dialog_info_title">Current user info</string>
+    <string name="db_on_complete_msg">postTransaction:onComplete:</string>
 
 </resources>

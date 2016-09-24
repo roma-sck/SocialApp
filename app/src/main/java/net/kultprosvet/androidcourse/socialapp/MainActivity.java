@@ -3,16 +3,14 @@ package net.kultprosvet.androidcourse.socialapp;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,7 +28,10 @@ import net.kultprosvet.androidcourse.socialapp.viewholder.PostViewHolder;
 
 public class MainActivity extends BaseActivity {
 
-    private static final String TAG = "MainActivity";
+    private static final int POSTS_QUERY_LIMIT = 100;
+    private static final int ONE_LIKE = 1;
+    private static final String POSTS = "posts";
+    private static final String USER_POSTS = "user-posts";
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
@@ -110,13 +111,13 @@ public class MainActivity extends BaseActivity {
                     viewHolder.likesView.setImageResource(R.drawable.ic_toggle_star_outline_24);
                 }
 
-                // Bind Post to ViewHolder, setting OnClickListener for the star button
+                // Bind Post to ViewHolder, setting OnClickListener for the like button
                 viewHolder.bindToPost(model, new View.OnClickListener() {
                     @Override
                     public void onClick(View starView) {
                         // Need to write to both places the post is stored
-                        DatabaseReference globalPostRef = mDatabase.child("posts").child(postRef.getKey());
-                        DatabaseReference userPostRef = mDatabase.child("user-posts").child(model.uid).child(postRef.getKey());
+                        DatabaseReference globalPostRef = mDatabase.child(POSTS).child(postRef.getKey());
+                        DatabaseReference userPostRef = mDatabase.child(USER_POSTS).child(model.uid).child(postRef.getKey());
 
                         // Run two transactions
                         onLikeClicked(globalPostRef);
@@ -149,12 +150,12 @@ public class MainActivity extends BaseActivity {
                     return Transaction.success(mutableData);
                 }
                 if (p.likes.containsKey(getUid())) {
-                    // Unstar the post and remove self from stars
-                    p.likesCount = p.likesCount - 1;
+                    // unlike the post and remove self from stars
+                    p.likesCount = p.likesCount - ONE_LIKE;
                     p.likes.remove(getUid());
                 } else {
-                    // Star the post and add self to stars
-                    p.likesCount = p.likesCount + 1;
+                    // like the post and add self to stars
+                    p.likesCount = p.likesCount + ONE_LIKE;
                     p.likes.put(getUid(), true);
                 }
                 // Set value and report transaction success
@@ -166,24 +167,24 @@ public class MainActivity extends BaseActivity {
             public void onComplete(DatabaseError databaseError, boolean b,
                                    DataSnapshot dataSnapshot) {
                 // Transaction completed
-                Log.d(TAG, "postTransaction:onComplete:" + databaseError);
+                Toast.makeText(getApplicationContext(),
+                        getString(R.string.db_on_complete_msg)+ databaseError,
+                        Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     public String getUid() {
-        return mAuth.getCurrentUser().getUid();
+        if(mAuth.getCurrentUser() != null) {
+            return mAuth.getCurrentUser().getUid();
+        }
+        return null;
     }
 
     public Query getQuery(DatabaseReference databaseReference) {
         // Last 100 posts, these are automatically the 100 most recent
-        return databaseReference.child("posts")
-                .limitToFirst(100);
-    }
-
-    //sign out method
-    public void signOut() {
-        mAuth.signOut();
+        return databaseReference.child(POSTS)
+                .limitToFirst(POSTS_QUERY_LIMIT);
     }
 
     @Override
