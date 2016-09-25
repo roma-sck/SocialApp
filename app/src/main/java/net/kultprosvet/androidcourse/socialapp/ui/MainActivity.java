@@ -116,14 +116,19 @@ public class MainActivity extends BaseActivity {
                 // Bind Post to ViewHolder, setting OnClickListener for the like button
                 viewHolder.bindToPost(model, new View.OnClickListener() {
                     @Override
-                    public void onClick(View starView) {
-                        // Need to write to both places the post is stored
-                        DatabaseReference globalPostRef = mDatabase.child(POSTS).child(postRef.getKey());
-                        DatabaseReference userPostRef = mDatabase.child(USER_POSTS).child(model.uid).child(postRef.getKey());
+                    public void onClick(View view) {
+                        int id = view.getId();
+                        if(id == R.id.post_like) {
+                            // Need to write to both places the post is stored
+                            DatabaseReference globalPostRef = mDatabase.child(POSTS).child(postRef.getKey());
+                            DatabaseReference userPostRef = mDatabase.child(USER_POSTS).child(model.uid).child(postRef.getKey());
 
-                        // Run two transactions
-                        onLikeClicked(globalPostRef);
-                        onLikeClicked(userPostRef);
+                            // Run two transactions
+                            onLikeClicked(globalPostRef);
+                            onLikeClicked(userPostRef);
+                        } else if(id == R.id.post_share) {
+                            onShareClicked(model.body);
+                        }
                     }
                 });
                 hideProgressDialog();
@@ -171,6 +176,15 @@ public class MainActivity extends BaseActivity {
                 // Transaction completed
             }
         });
+    }
+
+
+    private void onShareClicked(String videoLink) {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_TEXT, videoLink);
+        shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Check out this video!");
+        startActivity(Intent.createChooser(shareIntent, "Share"));
     }
 
     public String getUid() {

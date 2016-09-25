@@ -103,6 +103,7 @@ public class PostDetailActivity extends BaseActivity implements View.OnClickList
                 mTitleView.setText(post.title);
                 mBodyView.setText(post.body);
                 final String videoSource = post.body;
+                // show video inside videoView
                 if(videoSource != null && videoSource.contains(HTTPS_TEXT)) {
                     mVideoView.setVideoURI(Uri.parse(videoSource));
                     mVideoView.setMediaController(new MediaController(PostDetailActivity.this));
