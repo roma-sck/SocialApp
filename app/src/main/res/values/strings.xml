@@ -72,5 +72,7 @@
     <string name="post_body_text">test text text link</string>
     <string name="comment_author_text">John Doe</string>
     <string name="comment_body_text">This is the comment text..</string>
+    <string name="share_intent_subject">Check out this video!</string>
+    <string name="share_intent_title">Share via</string>
 
 </resources>

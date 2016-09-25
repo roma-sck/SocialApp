@@ -185,6 +185,7 @@ public class NewPostActivity extends BaseActivity {
                 }
             }
         });
+        builder.setCancelable(false);
         builder.show();
     }
 

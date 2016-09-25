@@ -33,6 +33,7 @@ public class MainActivity extends BaseActivity {
     private static final int POSTS_QUERY_LIMIT = 100;
     private static final int ONE_LIKE = 1;
     private static final String USER_POSTS = "user-posts";
+    private static final String SHARE_INTENT_TYPE = "text/plain";
 
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseAuth mAuth;
@@ -181,10 +182,10 @@ public class MainActivity extends BaseActivity {
 
     private void onShareClicked(String videoLink) {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.setType("text/plain");
+        shareIntent.setType(SHARE_INTENT_TYPE);
         shareIntent.putExtra(Intent.EXTRA_TEXT, videoLink);
-        shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Check out this video!");
-        startActivity(Intent.createChooser(shareIntent, "Share"));
+        shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.share_intent_subject));
+        startActivity(Intent.createChooser(shareIntent, getString(R.string.share_intent_title)));
     }
 
     public String getUid() {
