@@ -94,7 +94,7 @@
             <VideoView
                 android:id="@+id/video_view"
                 android:background="@android:color/transparent"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/video_view_margin"
                 android:layout_marginBottom="@dimen/video_view_margin"
