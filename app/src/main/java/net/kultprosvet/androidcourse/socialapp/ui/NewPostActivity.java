@@ -3,6 +3,7 @@ package net.kultprosvet.androidcourse.socialapp.ui;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -38,15 +39,16 @@ import java.util.UUID;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 
+import static android.os.Build.VERSION_CODES.KITKAT;
 import static net.kultprosvet.androidcourse.socialapp.Const.POSTS;
 import static net.kultprosvet.androidcourse.socialapp.Const.USERS;
 
 public class NewPostActivity extends BaseActivity {
 
-    private static final int RC_CHOOSE_VIDEO = 102;
-    private static final int RC_STORAGE_PERMS = 103;
+    private static final int RC_CHOOSE_VIDEO = 111;
+    private static final int RC_STORAGE_PERMS = 112;
     public static final int MEDIA_TYPE_VIDEO = 2;
-    private static final int CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE = 200;
+    private static final int CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE = 222;
     private static final int VIDEO_QUALITY_HIGH = 1;
     private static final String MEDIA = "media";
     private static final String REQUIRED = "Required";
@@ -59,6 +61,7 @@ public class NewPostActivity extends BaseActivity {
     private static final String POSTS_SLASH = "/posts/";
     private static final String USER_POSTS_SLASH = "/user-posts/";
     private static final String SLASH = "/";
+    private static final String INTENT_TYPE_VIDEO = "video/*";
 
     private DatabaseReference mDatabase;
     private EditText mTitleField;
@@ -227,10 +230,18 @@ public class NewPostActivity extends BaseActivity {
     }
 
     private void getGalleryVideo() {
-        Intent takeVideoIntent = new Intent(Intent.ACTION_PICK,
-                android.provider.MediaStore.Video.Media.EXTERNAL_CONTENT_URI);
-        takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, mFileUri);
-        startActivityForResult(takeVideoIntent, RC_CHOOSE_VIDEO);
+        if (Build.VERSION.SDK_INT < KITKAT) {
+            Intent takeVideoIntent = new Intent(Intent.ACTION_PICK);
+            takeVideoIntent.setType(INTENT_TYPE_VIDEO);
+            takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, mFileUri);
+            startActivityForResult(takeVideoIntent, RC_CHOOSE_VIDEO);
+        } else {
+            Intent takeVideoIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+            takeVideoIntent.addCategory(Intent.CATEGORY_OPENABLE);
+            takeVideoIntent.setType(INTENT_TYPE_VIDEO);
+            takeVideoIntent.putExtra(MediaStore.EXTRA_OUTPUT, mFileUri);
+            startActivityForResult(takeVideoIntent, RC_CHOOSE_VIDEO);
+        }
     }
 
     private void updateUI(FirebaseUser user) {
