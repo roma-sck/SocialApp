@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SocialApp</string>
+    <string name="app_name">Social Application</string>
 
     <string name="action_sign_in_short">Register</string>
     <string name="email">Email</string>
@@ -7,8 +7,6 @@
     <string name="auth_failed">Authentication failed, check your email and password or sign up</string>
     <string name="change_email">Change Email</string>
     <string name="change_password">Change Password</string>
-    <string name="send_password_reset_email">Send Password reset email</string>
-    <string name="remove_user">Remove user</string>
     <string name="new_pass">New Password</string>
     <string name="title_activity_profile">Firebase</string>
     <string name="title_activity_login">Sign in</string>
@@ -18,17 +16,12 @@
     <string name="btn_login">LOGIN</string>
     <string name="btn_link_to_register">Not a member? Get registered in Firebase now!</string>
     <string name="btn_link_to_login">Already registered. Login Me!</string>
-    <string name="title_activity_reset_password">ResetPasswordActivity</string>
-    <string name="btn_forgot_password">Forgot your password?</string>
-    <string name="btn_reset_password">Reset Password</string>
     <string name="btn_back"><![CDATA[<< Back]]></string>
     <string name="hint_new_email">New Email</string>
     <string name="btn_change">Change</string>
     <string name="btn_send">Send</string>
     <string name="btn_remove">Remove</string>
     <string name="btn_sign_out">Sign Out</string>
-    <string name="lbl_forgot_password">Forgot password?</string>
-    <string name="forgot_password_msg">We just need your registered Email Id to sent you password reset instructions.</string>
     <string name="user_email_text">"User Email :  "</string>
     <string name="user_id_text">"User Id :  "</string>
     <string name="error_toast_enter_email">"Enter email address!</string>
@@ -51,7 +44,7 @@
     <string name="add_new_video">Add new post video</string>
     <string name="uploading">Uploading...</string>
 
-    <string name="error_toast_taking_vid_failed">Taking picture failed.</string>
+    <string name="error_toast_taking_vid_failed">Taking video failed.</string>
     <string name="error_toast_not_fetch_user">Error: could not fetch user.</string>
     <string name="error_toast_upload_failed">Error: upload failed</string>
 
@@ -59,19 +52,19 @@
     <string name="post_link_hint">Post link</string>
     <string name="user_info">User info</string>
     <string name="dialog_info_title">Current user info</string>
-    <string name="db_on_complete_msg">postTransaction:onComplete:</string>
+    <string name="db_on_complete_msg" translatable="false">postTransaction:onComplete:</string>
     <string name="must_pass_extra_key">Must pass EXTRA_POST_KEY</string>
     <string name="failed_load_post">Failed to load post.</string>
     <string name="failed_load_comments">Failed to load comments.</string>
-    <string name="on_cancelled_err">onCancelled:</string>
+    <string name="on_cancelled_err" translatable="false">onCancelled:</string>
     <string name="my_post_text">My First Post</string>
     <string name="field_comment_hint_text">Write a comment...</string>
     <string name="btn_post_comment_text">Post</string>
     <string name="loading_text">Loading...</string>
-    <string name="post_author_text">someauthor@email.com</string>
-    <string name="post_body_text">test text text link</string>
-    <string name="comment_author_text">John Doe</string>
-    <string name="comment_body_text">This is the comment text..</string>
+    <string name="post_author_text" translatable="false">someauthor@email.com</string>
+    <string name="post_body_text" translatable="false">test text text link</string>
+    <string name="comment_author_text" translatable="false">Some Name</string>
+    <string name="comment_body_text" translatable="false">This is the comment text..</string>
     <string name="share_intent_subject">Check out this video!</string>
     <string name="share_intent_title">Share via</string>
 

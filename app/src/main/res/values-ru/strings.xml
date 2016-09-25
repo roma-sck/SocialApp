@@ -1,0 +1,65 @@
+<resources>
+    <string name="app_name">Social Application</string>
+
+    <string name="action_sign_in_short">Регистрация</string>
+    <string name="email">Email</string>
+    <string name="minimum_password">Пароль слишком короткий, введите минимум 6 символов!</string>
+    <string name="auth_failed">Ошибка аутентификации, проверьте свою электронную почту и пароль или зарегистрируйтесь</string>
+    <string name="change_email">Измените Почту</string>
+    <string name="change_password">Измените Пароль</string>
+    <string name="new_pass">Новый пароль</string>
+    <string name="title_activity_profile">Firebase</string>
+    <string name="title_activity_login">Войти</string>
+    <string name="hint_email">Почта</string>
+    <string name="hint_password">Пароль</string>
+    <string name="hint_name">Полное имя</string>
+    <string name="btn_login">ВОЙТИ</string>
+    <string name="btn_link_to_register">Вы не зарегистрированы? Зарегистрируйтесь в Firebase сейчас!</string>
+    <string name="btn_link_to_login">Уже зарегистрированы. Войти!</string>
+    <string name="btn_back"><![CDATA[<< Назад]]></string>
+    <string name="hint_new_email">Новый пароль</string>
+    <string name="btn_change">Изменить</string>
+    <string name="btn_send">Отправить</string>
+    <string name="btn_remove">Удалить</string>
+    <string name="btn_sign_out">Выйти</string>
+    <string name="user_email_text">"Почта пользователя :  "</string>
+    <string name="user_id_text">"Id пользователя :  "</string>
+    <string name="error_toast_enter_email">"Введите адрес почты!</string>
+    <string name="wrong_email_format">Неправильный формат почты</string>
+    <string name="error_toast_enter_password">Введите пароль!</string>
+    <string name="error_toast_short_password">Пароль слишком короткий, введите минимум 6 символов!</string>
+    <string name="error_toast_auth_failed">Ошибка аутентификации.</string>
+    <string name="toast_auth_completed">Создание пользователя с почтой: OnComplete:</string>
+    <string name="btn_new_post_text">Добавить новый пост</string>
+
+    <string name="camera_button_text">Загрузить</string>
+    <string name="take_photo_prompt">Загрузить фото</string>
+    <string name="download">Скачать</string>
+    <string name="success">Успешно</string>
+    <string name="log_out">Выйти</string>
+
+    <string name="take_video_from_camera">Видео с камеры</string>
+    <string name="choose_video_from_gallery">Выбрать из галереи</string>
+    <string name="dialog_choose_cancel">Отмена</string>
+    <string name="add_new_video">Добавить новый видео пост</string>
+    <string name="uploading">Выгрузка...</string>
+
+    <string name="error_toast_taking_vid_failed">Не удалось получить видео.</string>
+    <string name="error_toast_not_fetch_user">Ошибка: не удалось определить пользователя.</string>
+    <string name="error_toast_upload_failed">Ошибка: Сбой при загрузке</string>
+
+    <string name="post_title_hint">Название</string>
+    <string name="post_link_hint">Ссылка на пост</string>
+    <string name="user_info">Информация о пользователе</string>
+    <string name="dialog_info_title">Инфо о пользователе</string>
+    <string name="must_pass_extra_key">Необходимо получить EXTRA_POST_KEY</string>
+    <string name="failed_load_post">Не удалось загрузить пост.</string>
+    <string name="failed_load_comments">Не удалось загрузить комментарии.</string>
+    <string name="my_post_text">Мой первый пост</string>
+    <string name="field_comment_hint_text">Написать комментарий...</string>
+    <string name="btn_post_comment_text">Пост</string>
+    <string name="loading_text">Загрузка...</string>
+    <string name="share_intent_subject">Посмотрите это видео!</string>
+    <string name="share_intent_title">Поделиться через</string>
+
+</resources>

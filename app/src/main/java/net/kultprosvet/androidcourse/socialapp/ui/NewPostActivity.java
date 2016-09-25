@@ -234,7 +234,7 @@ public class NewPostActivity extends BaseActivity {
     }
 
     private void updateUI(FirebaseUser user) {
-        if (mDownloadUrl != null) {
+        if (user != null && mDownloadUrl != null) {
             ((TextView) findViewById(R.id.field_post_link)).setText(mDownloadUrl.toString());
         } else {
             ((TextView) findViewById(R.id.field_post_link)).setText(null);
