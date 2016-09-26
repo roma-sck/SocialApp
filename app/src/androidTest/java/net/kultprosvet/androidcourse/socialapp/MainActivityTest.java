@@ -2,6 +2,8 @@ package net.kultprosvet.androidcourse.socialapp;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
+import android.support.test.espresso.Espresso;
+import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.support.test.uiautomator.UiDevice;
@@ -20,6 +22,8 @@ import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static android.support.test.espresso.action.ViewActions.click;
+import static android.support.test.espresso.assertion.ViewAssertions.matches;
+import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
 /**
@@ -51,6 +55,20 @@ public class MainActivityTest {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Test
+    public void scrollToPositionTest() {
+        onView(withId(R.id.main_posts_list)).perform(RecyclerViewActions.scrollToPosition(3));
+    }
+
+    @Test
+    public void clickAtPositionTest() {
+        onView(withId(R.id.main_posts_list)).perform(RecyclerViewActions.actionOnItemAtPosition(3, click()));
+//        onView(withId(R.id.post_author)).check(matches(withText(post.getAuthor())));
+//        onView(withId(R.id.post_title)).check(matches(withText(post.getTitle())));
+//        onView(withId(R.id.post_body)).check(matches(withText(post.getBody())));
+        Espresso.pressBack();
     }
 
     @Test
