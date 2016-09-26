@@ -140,7 +140,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void setUpRecyclerView() {
-        mRecycler = (RecyclerView) findViewById(R.id.messages_list);
+        mRecycler = (RecyclerView) findViewById(R.id.main_posts_list);
         mRecycler.setHasFixedSize(true);
         // Set up Layout Manager, reverse layout
         LinearLayoutManager manager = new LinearLayoutManager(this);

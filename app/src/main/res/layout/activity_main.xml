@@ -32,7 +32,7 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior" >
 
         <android.support.v7.widget.RecyclerView
-            android:id="@+id/messages_list"
+            android:id="@+id/main_posts_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
@@ -51,7 +51,7 @@
         app:backgroundTint="@color/fab_color"
         android:src="@android:drawable/ic_menu_edit"
         android:layout_alignParentBottom="true"
-        android:layout_alignEnd="@+id/messages_list"
+        android:layout_alignEnd="@+id/main_posts_list"
         android:layout_gravity="bottom|end"
         app:layout_behavior=".utils.FabScrollBehavior"
         android:layout_marginRight="@dimen/fab_margin_right"

@@ -21,7 +21,6 @@ import org.junit.runner.RunWith;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.regex.Matcher;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
 import static android.support.test.espresso.Espresso.onView;
