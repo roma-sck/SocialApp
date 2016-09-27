@@ -30,7 +30,7 @@ import static net.kultprosvet.androidcourse.socialapp.Const.POSTS;
 
 public class MainActivity extends BaseActivity {
 
-    private static final int POSTS_QUERY_LIMIT = 100;
+    public static final int POSTS_QUERY_LIMIT = 100;
     private static final int ONE_LIKE = 1;
     private static final String USER_POSTS = "user-posts";
     private static final String SHARE_INTENT_TYPE = "text/plain";
@@ -77,6 +77,7 @@ public class MainActivity extends BaseActivity {
                 }
             }
         };
+        mDatabase = FirebaseDatabase.getInstance().getReference();
     }
 
     private void setUpToolbar() {
@@ -86,7 +87,6 @@ public class MainActivity extends BaseActivity {
     }
 
     private void showPosts() {
-        mDatabase = FirebaseDatabase.getInstance().getReference();
         setUpRecyclerView();
         // Set up FirebaseRecyclerAdapter with the Query
         Query postsQuery = getQuery(mDatabase);
