@@ -1,12 +1,12 @@
 # Video Sharing Social App
 
-Use Firebase Authentication to let users authenticate with Firebase using their email addresses and passwords.
+Use Firebase Authentication to let users log in with Firebase account using their email addresses and passwords.
 
-Upload video on the server from device gallery or camera.
+Upload video posts on the server from device gallery or camera.
 
-Watch users posts list, post comments and tap likess.
+Scroll users posts list, post comments, tap likess and share links with friends.
 
-Download videos by tapping on the link.
+Watch videos after click on post or download them by tapping on the link.
 
 ![alt tag](screenshots/socialapp_screenshot.png)
 
