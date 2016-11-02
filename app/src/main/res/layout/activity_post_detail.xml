@@ -37,6 +37,7 @@
             android:id="@+id/post_body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textColorLink="@color/indigo_color"
             tools:text="test text"
             android:autoLink="web"
             android:layout_below="@+id/video_layout"

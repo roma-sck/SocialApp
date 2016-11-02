@@ -8,6 +8,8 @@ Scroll users posts list, post comments, tap likess and share links with friends.
 
 Watch videos after click on post or download them by tapping on the link.
 
+UI tests with Espresso.
+
 ![alt tag](screenshots/socialapp_screenshot.png)
 
 
