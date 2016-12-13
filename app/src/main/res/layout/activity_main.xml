@@ -52,7 +52,7 @@
 
         <TextView
             android:id="@+id/empty_list_text"
-            android:text="The post list is empty.\nAdd your post."
+            android:text="@string/empty_posts_list_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"

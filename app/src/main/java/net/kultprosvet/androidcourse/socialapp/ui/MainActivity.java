@@ -2,6 +2,7 @@ package net.kultprosvet.androidcourse.socialapp.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,11 +34,13 @@ public class MainActivity extends BaseActivity {
     private static final int ONE_LIKE = 1;
     private static final String USER_POSTS = "user-posts";
     private static final String SHARE_INTENT_TYPE = "text/plain";
+    private static final long HANDLER_DELAY = 5000;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
     private FirebaseRecyclerAdapter<Post, PostViewHolder> mAdapter;
-    private RecyclerView mRecycler;
+    private RecyclerView mPostsList;
+    boolean isPopulateViewHolderCalled;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +91,16 @@ public class MainActivity extends BaseActivity {
         setUpRecyclerView();
         // Set up FirebaseRecyclerAdapter with the Query
         Query postsQuery = getQuery(mDatabase);
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                hideProgressDialog();
+                if( !isPopulateViewHolderCalled) {
+                    findViewById(R.id.empty_list_layout).setVisibility(View.VISIBLE);
+                }
+            }
+        }, HANDLER_DELAY);
         mAdapter = new FirebaseRecyclerAdapter<Post, PostViewHolder>(Post.class, R.layout.item_post,
                 PostViewHolder.class, postsQuery) {
             @Override
@@ -130,26 +143,29 @@ public class MainActivity extends BaseActivity {
                         }
                     }
                 });
+
+                isPopulateViewHolderCalled = true;
                 hideProgressDialog();
                 findViewById(R.id.empty_list_layout).setVisibility(View.GONE);
                 findViewById(R.id.list_layout).setVisibility(View.VISIBLE);
             }
         };
-        if(mAdapter.getItemCount() == 0) {
-            hideProgressDialog();
-            findViewById(R.id.empty_list_layout).setVisibility(View.VISIBLE);
-        }
-        mRecycler.setAdapter(mAdapter);
+
+        mPostsList.setAdapter(mAdapter);
     }
 
     private void setUpRecyclerView() {
-        mRecycler = (RecyclerView) findViewById(R.id.main_posts_list);
-        mRecycler.setHasFixedSize(true);
+        mPostsList = (RecyclerView) findViewById(R.id.main_posts_list);
+        mPostsList.setHasFixedSize(true);
+        mPostsList.setLayoutManager(getLinLayoutManager());
+    }
+
+    private LinearLayoutManager getLinLayoutManager() {
         // Set up Layout Manager, reverse layout
         LinearLayoutManager manager = new LinearLayoutManager(this);
         manager.setReverseLayout(true);
         manager.setStackFromEnd(true);
-        mRecycler.setLayoutManager(manager);
+        return manager;
     }
 
     private void onLikeClicked(DatabaseReference postRef) {

@@ -67,5 +67,6 @@
     <string name="comment_body_text" translatable="false">This is the comment text..</string>
     <string name="share_intent_subject">Check out this video!</string>
     <string name="share_intent_title">Share via</string>
+    <string name="empty_posts_list_text">The post list is empty.\nAdd your post.</string>
 
 </resources>
