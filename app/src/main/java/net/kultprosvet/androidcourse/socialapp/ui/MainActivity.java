@@ -29,12 +29,10 @@ import net.kultprosvet.androidcourse.socialapp.viewholder.PostViewHolder;
 import static net.kultprosvet.androidcourse.socialapp.Const.POSTS;
 
 public class MainActivity extends BaseActivity {
-
     public static final int POSTS_QUERY_LIMIT = 100;
     private static final int ONE_LIKE = 1;
     private static final String USER_POSTS = "user-posts";
     private static final String SHARE_INTENT_TYPE = "text/plain";
-
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
@@ -133,9 +131,14 @@ public class MainActivity extends BaseActivity {
                     }
                 });
                 hideProgressDialog();
+                findViewById(R.id.empty_list_layout).setVisibility(View.GONE);
                 findViewById(R.id.list_layout).setVisibility(View.VISIBLE);
             }
         };
+        if(mAdapter.getItemCount() == 0) {
+            hideProgressDialog();
+            findViewById(R.id.empty_list_layout).setVisibility(View.VISIBLE);
+        }
         mRecycler.setAdapter(mAdapter);
     }
 
@@ -178,7 +181,6 @@ public class MainActivity extends BaseActivity {
             }
         });
     }
-
 
     private void onShareClicked(String videoLink) {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);

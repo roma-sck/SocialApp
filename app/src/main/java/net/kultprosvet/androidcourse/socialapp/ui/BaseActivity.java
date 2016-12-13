@@ -1,6 +1,5 @@
 package net.kultprosvet.androidcourse.socialapp.ui;
 
-
 import android.app.ProgressDialog;
 import android.support.v7.app.AppCompatActivity;
 
@@ -9,7 +8,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import net.kultprosvet.androidcourse.socialapp.R;
 
 public class BaseActivity extends AppCompatActivity {
-
     private ProgressDialog mProgressDialog;
 
     public void showProgressDialog() {

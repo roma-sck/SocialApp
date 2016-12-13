@@ -20,7 +20,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import net.kultprosvet.androidcourse.socialapp.R;
 
 public class LoginActivity extends AppCompatActivity {
-
     private EditText mInputEmail, mInputPassword;
     private FirebaseAuth mAuth;
     private ProgressBar mProgressBar;
@@ -43,7 +42,6 @@ public class LoginActivity extends AppCompatActivity {
 
     private void initializeFirebase() {
         mAuth = FirebaseAuth.getInstance();
-
         if (mAuth.getCurrentUser() != null) {
             startActivity(new Intent(LoginActivity.this, MainActivity.class));
             finish();
