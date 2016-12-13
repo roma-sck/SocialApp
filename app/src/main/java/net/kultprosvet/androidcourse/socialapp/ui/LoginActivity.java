@@ -103,6 +103,8 @@ public class LoginActivity extends AppCompatActivity {
                                 mProgressBar.setVisibility(View.GONE);
                                 mBtnRegister.setClickable(true);
                                 mBtnLogin.setClickable(true);
+                                mBtnRegister.setEnabled(true);
+                                mBtnLogin.setEnabled(true);
                                 if (!task.isSuccessful()) {
                                     // there was an error
                                     if (password.length() < RegisterActivity.MIN_PASSWRD_LENGTH) {

@@ -18,6 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="@dimen/post_author_margin"
+        android:textStyle="bold"
         android:gravity="center_vertical"
         tools:text="@string/post_author_text" />
 
