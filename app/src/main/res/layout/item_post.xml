@@ -60,6 +60,15 @@
             android:layout_marginLeft="@dimen/inc_post_text_margin_left"
             android:layout_marginTop="@dimen/inc_post_text_margin_top" />
 
+        <ImageView
+            android:id="@+id/video_thumb"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/post_author_layout"
+            android:layout_marginTop="20dp"
+            />
+
     </RelativeLayout>
 
 </android.support.v7.widget.CardView>

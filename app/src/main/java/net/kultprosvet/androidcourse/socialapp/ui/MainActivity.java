@@ -1,8 +1,12 @@
 package net.kultprosvet.androidcourse.socialapp.ui;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.media.MediaMetadataRetriever;
+import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,7 +29,10 @@ import com.google.firebase.database.Transaction;
 
 import net.kultprosvet.androidcourse.socialapp.R;
 import net.kultprosvet.androidcourse.socialapp.models.Post;
+import net.kultprosvet.androidcourse.socialapp.utils.ThumbnailExtract;
 import net.kultprosvet.androidcourse.socialapp.viewholder.PostViewHolder;
+
+import java.util.HashMap;
 
 import static net.kultprosvet.androidcourse.socialapp.Const.POSTS;
 
@@ -123,6 +130,15 @@ public class MainActivity extends BaseActivity {
                     viewHolder.likesView.setImageResource(R.drawable.ic_toggle_star_24);
                 } else {
                     viewHolder.likesView.setImageResource(R.drawable.ic_toggle_star_outline_24);
+                }
+
+                String videoSource = model.body;
+                if (videoSource != null && videoSource.startsWith("https://firebasestorage.googleapis.com")) {
+                    try {
+                        new ThumbnailExtract(model.body, viewHolder.videoThumb, true).execute();
+                    } catch (Throwable t) {
+                        // can't create thumb
+                    }
                 }
 
                 // Bind Post to ViewHolder, setting OnClickListener for the like button

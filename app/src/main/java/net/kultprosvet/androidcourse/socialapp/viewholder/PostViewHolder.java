@@ -16,6 +16,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
     public ImageView likesView;
     public TextView numStarsView;
     public TextView bodyView;
+    public ImageView videoThumb;
 
     public PostViewHolder(View itemView) {
         super(itemView);
@@ -30,6 +31,7 @@ public class PostViewHolder extends RecyclerView.ViewHolder {
         likesView = (ImageView) itemView.findViewById(R.id.post_like);
         numStarsView = (TextView) itemView.findViewById(R.id.post_num_likes);
         bodyView = (TextView) itemView.findViewById(R.id.post_body);
+        videoThumb = (ImageView) itemView.findViewById(R.id.video_thumb);
     }
 
     public void bindToPost(Post post, View.OnClickListener onClickListener) {

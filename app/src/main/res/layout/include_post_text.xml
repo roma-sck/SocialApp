@@ -13,6 +13,7 @@
         tools:text="@string/post_body_text"
         android:layout_marginTop="@dimen/post_body_margin"
         android:textStyle="bold"
+        android:maxLength="35"
         android:layout_below="@+id/post_title"
         android:layout_alignParentStart="true" />
 
@@ -24,6 +25,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:textStyle="bold"
+        android:maxLength="35"
         tools:text="@string/my_post_text"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
