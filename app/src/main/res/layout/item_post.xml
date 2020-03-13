@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -17,14 +17,22 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true" />
 
+        <include
+            android:id="@+id/post_text_about"
+            layout="@layout/include_post_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/post_author_layout"
+            android:layout_marginTop="@dimen/inc_post_text_margin_top"
+            android:layout_marginLeft="@dimen/inc_post_text_margin_left" />
+
         <LinearLayout
             android:id="@+id/likes_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/post_author_layout"
-            android:layout_alignParentRight="true"
-            android:layout_alignTop="@+id/post_author_layout"
+            android:layout_below="@+id/post_text_about"
             android:gravity="center_vertical"
+            android:layout_marginTop="@dimen/post_body_margin"
             android:orientation="horizontal">
 
             <ImageView
@@ -50,25 +58,15 @@
                 android:gravity="center"
                 android:textStyle="bold"
                 tools:text="7" />
-
         </LinearLayout>
-
-        <include layout="@layout/include_post_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/post_author_layout"
-            android:layout_marginLeft="@dimen/inc_post_text_margin_left"
-            android:layout_marginTop="@dimen/inc_post_text_margin_top" />
 
         <ImageView
             android:id="@+id/video_thumb"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_alignParentEnd="true"
-            android:layout_below="@+id/post_author_layout"
-            android:layout_marginTop="20dp"
-            />
+            android:layout_width="@dimen/video_thumb_w_h"
+            android:layout_height="@dimen/video_thumb_w_h"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true" />
 
     </RelativeLayout>
 
-</android.support.v7.widget.CardView>
+</androidx.cardview.widget.CardView>

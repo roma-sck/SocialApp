@@ -1,7 +1,7 @@
 package net.kultprosvet.androidcourse.socialapp.ui;
 
 import android.app.ProgressDialog;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 

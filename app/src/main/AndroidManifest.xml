@@ -46,7 +46,7 @@
           https://developer.android.com/reference/android/support/v4/content/FileProvider.html#ProviderDefinition
         -->
         <provider
-            android:name="android.support.v4.content.FileProvider"
+            android:name="androidx.core.content.FileProvider"
             android:authorities="net.kultprosvet.androidcourse.socialapp.ui.NewPostActivity"
             android:exported="false"
             android:grantUriPermissions="true">

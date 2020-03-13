@@ -1,22 +1,24 @@
 package net.kultprosvet.androidcourse.socialapp.ui;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.media.MediaMetadataRetriever;
-import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.widget.Toolbar;
+
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -29,10 +31,7 @@ import com.google.firebase.database.Transaction;
 
 import net.kultprosvet.androidcourse.socialapp.R;
 import net.kultprosvet.androidcourse.socialapp.models.Post;
-import net.kultprosvet.androidcourse.socialapp.utils.ThumbnailExtract;
 import net.kultprosvet.androidcourse.socialapp.viewholder.PostViewHolder;
-
-import java.util.HashMap;
 
 import static net.kultprosvet.androidcourse.socialapp.Const.POSTS;
 
@@ -97,21 +96,36 @@ public class MainActivity extends BaseActivity {
     private void showPosts() {
         setUpRecyclerView();
         // Set up FirebaseRecyclerAdapter with the Query
-        Query postsQuery = getQuery(mDatabase);
+        Query postsQuery = mDatabase.child(POSTS).limitToFirst(POSTS_QUERY_LIMIT);
+        mDatabase.keepSynced(true);
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 hideProgressDialog();
-                if( !isPopulateViewHolderCalled) {
-                    findViewById(R.id.empty_list_layout).setVisibility(View.VISIBLE);
-                }
+                if( !isPopulateViewHolderCalled) showPostsList(false);
             }
         }, HANDLER_DELAY);
-        mAdapter = new FirebaseRecyclerAdapter<Post, PostViewHolder>(Post.class, R.layout.item_post,
-                PostViewHolder.class, postsQuery) {
+        FirebaseRecyclerOptions<Post> options =
+                new FirebaseRecyclerOptions.Builder<Post>()
+                        .setQuery(postsQuery, Post.class)
+                        .build();
+        mAdapter = new FirebaseRecyclerAdapter<Post, PostViewHolder>(options) {
+            @NonNull
             @Override
-            protected void populateViewHolder(final PostViewHolder viewHolder, final Post model, final int position) {
+            public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext())
+                        .inflate(R.layout.item_post, parent, false);
+                return new PostViewHolder(view);
+            }
+
+            @Override
+            public void onBindViewHolder(@NonNull PostViewHolder holder, int position) {
+                super.onBindViewHolder(holder, position);
+            }
+
+            @Override
+            protected void onBindViewHolder(@NonNull PostViewHolder viewHolder, final int position, @NonNull final Post model) {
                 final DatabaseReference postRef = getRef(position);
                 // Set click listener for the whole post view
                 final String postKey = postRef.getKey();
@@ -132,13 +146,13 @@ public class MainActivity extends BaseActivity {
                     viewHolder.likesView.setImageResource(R.drawable.ic_toggle_star_outline_24);
                 }
 
+                viewHolder.videoThumb.setImageBitmap(null);
                 String videoSource = model.body;
                 if (videoSource != null && videoSource.startsWith("https://firebasestorage.googleapis.com")) {
-                    try {
-                        new ThumbnailExtract(model.body, viewHolder.videoThumb, true).execute();
-                    } catch (Throwable t) {
-                        // can't create thumb
-                    }
+                    Glide.with(MainActivity.this)
+                            .load(videoSource)
+                            .centerCrop()
+                            .into(viewHolder.videoThumb);
                 }
 
                 // Bind Post to ViewHolder, setting OnClickListener for the like button
@@ -150,7 +164,6 @@ public class MainActivity extends BaseActivity {
                             // Need to write to both places the post is stored
                             DatabaseReference globalPostRef = mDatabase.child(POSTS).child(postRef.getKey());
                             DatabaseReference userPostRef = mDatabase.child(USER_POSTS).child(model.uid).child(postRef.getKey());
-
                             // Run two transactions
                             onLikeClicked(globalPostRef);
                             onLikeClicked(userPostRef);
@@ -162,17 +175,31 @@ public class MainActivity extends BaseActivity {
 
                 isPopulateViewHolderCalled = true;
                 hideProgressDialog();
-                findViewById(R.id.empty_list_layout).setVisibility(View.GONE);
-                findViewById(R.id.list_layout).setVisibility(View.VISIBLE);
+                showPostsList(true);
+            }
+
+            @Override
+            public void onDataChanged() {
+                super.onDataChanged();
+                if (mAdapter.getItemCount() > 0) showPostsList(true);
+            }
+
+            @Override
+            public void onError(@NonNull DatabaseError error) {
+                super.onError(error);
             }
         };
-
         mPostsList.setAdapter(mAdapter);
+    }
+
+    private void showPostsList(boolean showPosts) {
+        findViewById(R.id.empty_list_layout).setVisibility(showPosts ? View.GONE : View.VISIBLE);
+        findViewById(R.id.list_layout).setVisibility(showPosts ? View.VISIBLE : View.GONE);
     }
 
     private void setUpRecyclerView() {
         mPostsList = (RecyclerView) findViewById(R.id.main_posts_list);
-        mPostsList.setHasFixedSize(true);
+//        mPostsList.setHasFixedSize(true);
         mPostsList.setLayoutManager(getLinLayoutManager());
     }
 
@@ -229,32 +256,18 @@ public class MainActivity extends BaseActivity {
         return null;
     }
 
-    public Query getQuery(DatabaseReference databaseReference) {
-        // Last 100 posts, these are automatically the 100 most recent
-        return databaseReference.child(POSTS)
-                .limitToFirst(POSTS_QUERY_LIMIT);
-    }
-
     @Override
     public void onStart() {
         super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
+        if (mAuthListener != null) mAuth.addAuthStateListener(mAuthListener);
+        if (mAdapter != null) mAdapter.startListening();
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mAdapter != null) {
-            mAdapter.cleanup();
-        }
+        if (mAuthListener != null) mAuth.removeAuthStateListener(mAuthListener);
+        if (mAdapter != null) mAdapter.stopListening();
     }
 
     @Override

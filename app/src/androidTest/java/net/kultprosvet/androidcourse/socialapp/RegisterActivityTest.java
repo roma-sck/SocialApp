@@ -2,12 +2,12 @@ package net.kultprosvet.androidcourse.socialapp;
 
 import android.content.Context;
 import android.os.Environment;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.espresso.matcher.ViewMatchers;
-import android.support.test.rule.ActivityTestRule;
-import android.support.test.runner.AndroidJUnit4;
-import android.support.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
-import android.support.test.uiautomator.UiDevice;
+import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.espresso.matcher.ViewMatchers;
+import androidx.test.rule.ActivityTestRule;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.runner.lifecycle.ActivityLifecycleMonitorRegistry;
+import androidx.test.uiautomator.UiDevice;
 
 import net.kultprosvet.androidcourse.socialapp.ui.MainActivity;
 import net.kultprosvet.androidcourse.socialapp.ui.RegisterActivity;
@@ -22,16 +22,16 @@ import org.junit.runner.RunWith;
 import java.io.File;
 import java.util.Collection;
 
-import static android.support.test.InstrumentationRegistry.getInstrumentation;
-import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
-import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.action.ViewActions.replaceText;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.hasErrorText;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static android.support.test.runner.lifecycle.Stage.RESUMED;
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
+import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.replaceText;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.hasErrorText;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static androidx.test.runner.lifecycle.Stage.RESUMED;
 import static org.hamcrest.Matchers.not;
 
 /**

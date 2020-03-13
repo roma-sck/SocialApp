@@ -37,5 +37,6 @@
     <dimen name="inc_post_text_margin_top">10dp</dimen>
     <dimen name="video_layout_height">300dp</dimen>
     <dimen name="video_view_margin">10dp</dimen>
+    <dimen name="video_thumb_w_h">100dp</dimen>
 
 </resources>

@@ -7,8 +7,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AlertDialog;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -116,9 +117,16 @@ public class NewPostActivity extends BaseActivity {
                 .addOnSuccessListener(this, new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        if(taskSnapshot != null) {
-                            mDownloadUrl = taskSnapshot.getMetadata().getDownloadUrl();
-                            mBodyField.setText(mDownloadUrl.toString());
+                        if (taskSnapshot != null && taskSnapshot.getMetadata() != null &&
+                                taskSnapshot.getMetadata().getReference() != null) {
+                            Task<Uri> result = taskSnapshot.getMetadata().getReference().getDownloadUrl();
+                            result.addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    mDownloadUrl = uri;
+                                    mBodyField.setText(mDownloadUrl.toString());
+                                }
+                            });
                         }
                         hideProgressDialog();
                     }
@@ -156,7 +164,7 @@ public class NewPostActivity extends BaseActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(data != null) mFileUri = data.getData();
+        if (data != null) mFileUri = data.getData();
         if (requestCode == CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE && resultCode == RESULT_OK) {
             uploadFromUri(mFileUri);
         } else if (requestCode == RC_CHOOSE_VIDEO && resultCode == RESULT_OK) {
@@ -166,6 +174,7 @@ public class NewPostActivity extends BaseActivity {
                     getString(R.string.error_toast_taking_vid_failed),
                     Toast.LENGTH_SHORT).show();
         }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void uploadVideo() {

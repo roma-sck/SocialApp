@@ -2,13 +2,13 @@ package net.kultprosvet.androidcourse.socialapp;
 
 import android.content.Context;
 import android.os.Environment;
-import android.support.test.InstrumentationRegistry;
-import android.support.test.espresso.Espresso;
-import android.support.test.espresso.contrib.RecyclerViewActions;
-import android.support.test.rule.ActivityTestRule;
-import android.support.test.runner.AndroidJUnit4;
-import android.support.test.uiautomator.UiDevice;
-import android.support.v7.widget.RecyclerView;
+import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.espresso.Espresso;
+import androidx.test.espresso.contrib.RecyclerViewActions;
+import androidx.test.rule.ActivityTestRule;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.uiautomator.UiDevice;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -31,13 +31,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static android.support.test.InstrumentationRegistry.getInstrumentation;
-import static android.support.test.espresso.Espresso.onView;
-import static android.support.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
-import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.assertion.ViewAssertions.matches;
-import static android.support.test.espresso.matcher.ViewMatchers.withId;
-import static android.support.test.espresso.matcher.ViewMatchers.withText;
+import static androidx.test.platform.app.InstrumentationRegistry.getInstrumentation;
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
+import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static net.kultprosvet.androidcourse.socialapp.Const.POSTS;
 
 /**
