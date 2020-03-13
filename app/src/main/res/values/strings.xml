@@ -68,5 +68,6 @@
     <string name="share_intent_subject">Check out this video!</string>
     <string name="share_intent_title">Share via</string>
     <string name="empty_posts_list_text">The post list is empty.\nAdd your post.</string>
+    <string name="require_perm">SocialApp need these permissions to add new posts.</string>
 
 </resources>

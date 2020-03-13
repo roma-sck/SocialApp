@@ -1,11 +1,13 @@
 package net.kultprosvet.androidcourse.socialapp.ui;
 
+import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.provider.MediaStore;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -35,16 +37,18 @@ import net.kultprosvet.androidcourse.socialapp.models.User;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
 
 import static android.os.Build.VERSION_CODES.KITKAT;
 import static net.kultprosvet.androidcourse.socialapp.Const.POSTS;
 import static net.kultprosvet.androidcourse.socialapp.Const.USERS;
 
-public class NewPostActivity extends BaseActivity {
+public class NewPostActivity extends BaseActivity implements EasyPermissions.PermissionCallbacks {
 
     private static final int RC_CHOOSE_VIDEO = 111;
     private static final int RC_STORAGE_PERMS = 112;
@@ -201,18 +205,33 @@ public class NewPostActivity extends BaseActivity {
         builder.show();
     }
 
+    private String[] getCameraVideoPermissions() {
+        return new String[] {
+                Manifest.permission.CAMERA,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+        };
+    }
+
     @AfterPermissionGranted(RC_STORAGE_PERMS)
     private void getCameraVideo() {
-        // create new Intentwith with Standard Intent action that can be
-        // sent to have the camera application capture an video and return it.
-        Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
-        // create a file to save the video
-        mFileUri = Uri.fromFile(getOutputMediaFile(MEDIA_TYPE_VIDEO));
-        // set the image file name
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, mFileUri);
-        // set the video image quality to high
-        intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, VIDEO_QUALITY_HIGH);
-        startActivityForResult(intent, CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE);
+        if (EasyPermissions.hasPermissions(this, getCameraVideoPermissions())) {
+            StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+            StrictMode.setVmPolicy(builder.build());
+            // create new Intentwith with Standard Intent action that can be
+            // sent to have the camera application capture an video and return it.
+            Intent intent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+            // create a file to save the video
+            mFileUri = Uri.fromFile(getOutputMediaFile(MEDIA_TYPE_VIDEO));
+            // set the image file name
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, mFileUri);
+            // set the video image quality to high
+            intent.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, VIDEO_QUALITY_HIGH);
+            startActivityForResult(intent, CAPTURE_VIDEO_ACTIVITY_REQUEST_CODE);
+        } else {
+            EasyPermissions.requestPermissions(this, getString(R.string.require_perm),
+                    RC_STORAGE_PERMS, getCameraVideoPermissions());
+        }
     }
 
     /** Create a File for saving an image or video */
@@ -312,5 +331,25 @@ public class NewPostActivity extends BaseActivity {
         childUpdates.put(POSTS_SLASH + key, postValues);
         childUpdates.put(USER_POSTS_SLASH + userId + SLASH + key, postValues);
         mDatabase.updateChildren(childUpdates);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, @NonNull List<String> list) {
+        if (requestCode == RC_STORAGE_PERMS) {
+            getCameraVideo();
+        }
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, @NonNull List<String> list) {
+        if (requestCode == RC_STORAGE_PERMS) {
+            getCameraVideo();
+        }
     }
 }
